@@ -7,7 +7,7 @@
   <meta name="description" content="Portafolio de proyectos de diseño y desarrollo.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="is-loading" data-page="home" id="top">
@@ -24,12 +24,22 @@
 
   <main>
     <!-- HERO -->
-    <section class="hero" id="inicio">
-      <h1 class="hero__title" id="heroTitle"></h1>
-      <div class="hero__bottom">
-        <p class="label" id="heroRol"></p>
-        <p class="hero__intro" id="heroIntro"></p>
-        <span class="label hero__scroll" id="heroDisp"></span>
+    <section class="fh" id="inicio" data-cursor="Arrastrar">
+      <div class="fh__media" id="fhMedia"></div>
+      <h1 class="fh__title"><a class="sw-wrap" id="fhLink" href="#" data-cursor="Ver"><span class="sw" id="fhTitle"></span></a></h1>
+      <div class="fh__meta">
+        <span class="sw-wrap"><span class="sw" id="fhYear"></span></span>
+        <span class="sw-wrap"><span class="sw" id="fhCat"></span></span>
+      </div>
+      <div class="fh__tabs" id="fhTabs"></div>
+      <div class="fh__bar">
+        <span class="fh__drag">Arrastra para explorar</span>
+        <div class="fh__nav">
+          <button id="fhPrev" aria-label="Anterior" data-hover>←</button>
+          <span>Navegar</span>
+          <button id="fhNext" aria-label="Siguiente" data-hover>→</button>
+        </div>
+        <span>Proyecto destacado</span>
       </div>
     </section>
 

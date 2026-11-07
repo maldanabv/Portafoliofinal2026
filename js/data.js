@@ -42,13 +42,18 @@ const PERFIL = {
 };
 
 /* ---------- PROYECTOS ----------
-   id:        identificador único sin espacios (se usa en la URL)
-   color:     dos colores para el degradado si no hay imagen
-   galeria:   lista de imágenes para la página del proyecto
+   id:          identificador único sin espacios (se usa en la URL)
+   destacado:   true = aparece en el slider de la primera pantalla (máx. 4)
+   imagenHero:  (opcional) PNG sin fondo para el slider, ej: "img/reloj.png".
+                Si no hay, se usa "imagen"; si tampoco, un degradado.
+   color:       dos colores para el degradado si no hay imagen
+   galeria:     lista de imágenes para la página del proyecto
 */
 const PROYECTOS = [
   {
     id: "proyecto-uno",
+    destacado: true,
+    imagenHero: "",
     titulo: "Proyecto Uno",
     categoria: "Branding",
     anio: "2026",
@@ -65,6 +70,8 @@ const PROYECTOS = [
   },
   {
     id: "proyecto-dos",
+    destacado: true,
+    imagenHero: "",
     titulo: "Proyecto Dos",
     categoria: "Diseño Web",
     anio: "2026",
@@ -81,6 +88,8 @@ const PROYECTOS = [
   },
   {
     id: "proyecto-tres",
+    destacado: true,
+    imagenHero: "",
     titulo: "Proyecto Tres",
     categoria: "Fotografía",
     anio: "2025",

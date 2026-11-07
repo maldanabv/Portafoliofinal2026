@@ -30,11 +30,35 @@
 
     $("#header").innerHTML = `
       <a href="index.html" class="logo" data-hover>${logo}</a>
+      <nav class="header__nav">${links
+        .map(([t, h], i) => `<a href="${h}" data-sec="${h.split("#")[1]}"${isHome && i === 0 ? ' class="active"' : ""} data-hover>${t}</a>`)
+        .join("")}</nav>
       <div class="header__right">
-        <nav class="header__nav">${links.slice(1).map(([t, h]) => `<a href="${h}" data-hover>${t}</a>`).join("")}</nav>
         <button class="theme-btn" id="themeBtn" aria-label="Cambiar tema" data-hover></button>
+        <a class="pill-btn" href="#contacto" data-hover>Contáctame</a>
         <button class="menu-btn" id="menuBtn" data-hover><span>Menú</span><i></i></button>
       </div>`;
+
+    // Ocultar el header al bajar y mostrarlo al subir
+    let lastY = scrollY;
+    window.addEventListener("scroll", () => {
+      const y = scrollY, h = $("#header");
+      h.classList.toggle("scrolled", y > 40);
+      h.classList.toggle("hide", y > lastY && y > 200 && !document.body.classList.contains("menu-open"));
+      lastY = y;
+    }, { passive: true });
+
+    // Resaltar la sección visible en el menú
+    if (isHome) {
+      const navLinks = [...document.querySelectorAll(".header__nav a")];
+      const spy = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (!en.isIntersecting) return;
+          navLinks.forEach((a) => a.classList.toggle("active", a.dataset.sec === en.target.id));
+        });
+      }, { rootMargin: "-45% 0px -50% 0px" });
+      ["inicio", "proyectos", "servicios", "sobre-mi", "contacto"].forEach((id) => { const el = document.getElementById(id); if (el) spy.observe(el); });
+    }
 
     $("#menu").innerHTML = `
       <ul class="menu__links">${links.map(([t, h], i) => `<li><a href="${h}">${t}<sup>${pad(i + 1)}</sup></a></li>`).join("")}</ul>
@@ -67,7 +91,7 @@
     // Tema claro / oscuro
     try { const t = localStorage.getItem("tema"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
     $("#themeBtn").addEventListener("click", () => {
-      const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
       document.documentElement.dataset.theme = next;
       try { localStorage.setItem("tema", next); } catch (e) {}
     });
@@ -83,10 +107,7 @@
   /* ---------- Página de inicio ---------- */
   function renderHome() {
     document.title = `${PERFIL.nombre} ${PERFIL.apellido} — Portafolio`;
-    $("#heroTitle").innerHTML = PERFIL.heroTitulo.map((l) => `<span class="line"><span>${esc(l)}</span></span>`).join("");
-    $("#heroIntro").textContent = PERFIL.heroIntro;
-    $("#heroRol").innerHTML = `${esc(PERFIL.nombre)} ${esc(PERFIL.apellido)}<br>${esc(PERFIL.rol)}`;
-    $("#heroDisp").textContent = PERFIL.disponibilidad;
+    initHero();
 
     $("#slider").innerHTML = PROYECTOS.map((p) => `
       <a class="card" href="proyecto.html?id=${encodeURIComponent(p.id)}" data-cursor="Ver">
@@ -124,6 +145,92 @@
 
     initDrag($("#slider"));
     initListPreview();
+  }
+
+  /* ---------- Hero: slider de proyectos destacados ---------- */
+  function initHero() {
+    const DURACION = 6; // segundos por proyecto
+    const dest = PROYECTOS.filter((p) => p.destacado);
+    const items = (dest.length ? dest : PROYECTOS).slice(0, 4);
+    const hero = $("#inicio");
+    hero.style.setProperty("--n", items.length);
+    hero.style.setProperty("--dur", DURACION + "s");
+
+    $("#fhMedia").innerHTML = items.map((p) => {
+      let m;
+      if (p.imagenHero) m = `<img class="cut" src="${esc(p.imagenHero)}" alt="${esc(p.titulo)}">`;
+      else m = media(p);
+      return `<div class="fh__img">${m}</div>`;
+    }).join("");
+    $("#fhTabs").innerHTML = items.map((p, i) => `
+      <button class="fh__tab" data-i="${i}" aria-label="${esc(p.titulo)}" data-hover>
+        <span class="fh__num">${pad(i + 1)}.</span><span class="fh__line"><i></i></span>
+      </button>`).join("");
+
+    const imgs = [...document.querySelectorAll(".fh__img")];
+    const tabs = [...document.querySelectorAll(".fh__tab")];
+    let cur = -1;
+
+    function swap(el, text, first) {
+      if (first) { el.textContent = text; return; }
+      el.classList.add("out");
+      setTimeout(() => {
+        el.textContent = text;
+        el.classList.remove("out");
+        el.classList.add("in-start");
+        void el.offsetWidth;
+        el.classList.remove("in-start");
+      }, 380);
+    }
+
+    function go(i) {
+      i = (i + items.length) % items.length;
+      if (i === cur) return;
+      const first = cur === -1;
+      cur = i;
+      const p = items[i];
+      imgs.forEach((el, k) => el.classList.toggle("active", k === i));
+      tabs.forEach((el, k) => {
+        el.classList.remove("active");
+        const bar = $("i", el);
+        bar.style.animation = "none"; void bar.offsetWidth; bar.style.animation = "";
+        if (k === i) el.classList.add("active");
+      });
+      swap($("#fhTitle"), p.titulo, first);
+      swap($("#fhYear"), p.anio, first);
+      swap($("#fhCat"), p.categoria, first);
+      $("#fhLink").href = `proyecto.html?id=${encodeURIComponent(p.id)}`;
+    }
+
+    tabs.forEach((t) => {
+      t.addEventListener("click", () => go(+t.dataset.i));
+      $("i", t).addEventListener("animationend", () => { if (t.classList.contains("active")) go(cur + 1); });
+    });
+    $("#fhPrev").addEventListener("click", () => go(cur - 1));
+    $("#fhNext").addEventListener("click", () => go(cur + 1));
+
+    // Arrastrar (mouse o dedo) para cambiar de proyecto
+    let sx = null, dragged = false;
+    hero.addEventListener("pointerdown", (e) => { if (!e.target.closest("button")) { sx = e.clientX; dragged = false; } });
+    window.addEventListener("pointerup", (e) => {
+      if (sx === null) return;
+      const dx = e.clientX - sx; sx = null;
+      if (Math.abs(dx) > 50) { dragged = true; go(dx < 0 ? cur + 1 : cur - 1); }
+    });
+    $("#fhLink").addEventListener("click", (e) => { if (dragged) e.preventDefault(); });
+    $("#fhLink").addEventListener("dragstart", (e) => e.preventDefault());
+
+    // Teclado
+    window.addEventListener("keydown", (e) => {
+      if (scrollY > innerHeight) return;
+      if (e.key === "ArrowRight") go(cur + 1);
+      if (e.key === "ArrowLeft") go(cur - 1);
+    });
+
+    // Pausar el avance automático cuando el hero no está visible
+    new IntersectionObserver(([en]) => hero.classList.toggle("paused", !en.isIntersecting)).observe(hero);
+
+    go(0);
   }
 
   /* ---------- Página de proyecto ---------- */
