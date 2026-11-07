@@ -1,5 +1,5 @@
 /* =========================================================
-   CONTENIDO DEL PORTAFOLIO
+   CONTENIDO DEL PORTAFOLIO — MJ DIGITAL STUDIO
    ---------------------------------------------------------
    Edita SOLO este archivo para cambiar tus textos, datos
    y proyectos. Todo lo demás se genera automáticamente.
@@ -8,32 +8,31 @@
    ========================================================= */
 
 const PERFIL = {
-  nombre: "Tu Nombre",
-  apellido: "Apellido",
-  rol: "Diseñadora · Desarrolladora creativa",
-  ciudad: "Bogotá, Colombia",
+  marca: "MJ Digital Studio",
+  nombre: "María José",
+  apellido: "Aldana Bravo",
+  rol: "Estudiante de Creación Digital",
+  ciudad: "Bogotá, Colombia", // ← confirmar
   zonaHoraria: "America/Bogota",
-  email: "hola@tucorreo.com",
-  telefono: "+57 300 000 0000",
-  disponibilidad: "Disponible para proyectos 2026",
-  logo: "TN.", // texto del logo (o deja vacío y usa logoImg)
+  email: "tucorreo@ejemplo.com", // ← PENDIENTE: correo de contacto público
+  telefono: "", // opcional, déjalo vacío si no quieres mostrarlo
+  logo: "MJ Digital Studio", // texto del logo (o usa logoImg con una imagen)
   logoImg: "",
-  cv: "", // ej: "docs/cv.pdf"
-  heroTitulo: ["Diseño", "experiencias", "que se sienten"],
-  heroIntro:
-    "Escribe aquí una frase corta que te presente: qué haces, para quién y qué te hace diferente.",
+  cv: "", // ej: "docs/cv-maria-jose-aldana.pdf"
   declaracion: [
-    "Una mirada creativa",
-    "que combina estrategia,",
-    "diseño y tecnología",
-    "en cada proyecto",
+    "Entre el arte",
+    "y la ingeniería:",
+    "sensibilidad estética",
+    "con estrategia",
   ],
+  saludo: "Hola, soy María José.",
   bio: [
-    "Primer párrafo sobre ti: tu formación, dónde estudias o estudiaste y en qué te especializas.",
-    "Segundo párrafo: tu forma de trabajar, tus intereses y qué buscas en tus próximos proyectos.",
+    "Soy María José Aldana Bravo, estudiante de Creación Digital. Hago edición de video, 3D, programación, marketing y briefs creativos.",
+    "Vengo de una formación entre el arte y la ingeniería, y por eso pienso cada proyecto con sensibilidad estética y con estrategia.",
   ],
-  foto: "", // ej: "img/yo.jpg"
+  foto: "", // ej: "img/maria-jose.jpg"
   redes: [
+    // ← PENDIENTE: pon tus enlaces reales (borra las que no uses)
     { nombre: "Instagram", url: "#" },
     { nombre: "LinkedIn", url: "#" },
     { nombre: "Behance", url: "#" },
@@ -48,131 +47,117 @@ const PERFIL = {
                 Si no hay, se usa "imagen"; si tampoco, un degradado.
    color:       dos colores para el degradado si no hay imagen
    galeria:     lista de imágenes para la página del proyecto
+   ← PENDIENTE: reemplazar con tus proyectos reales
 */
 const PROYECTOS = [
   {
-    id: "proyecto-uno",
+    id: "proyecto-video",
     destacado: true,
     imagenHero: "",
-    titulo: "Proyecto Uno",
-    categoria: "Branding",
+    titulo: "Proyecto Video",
+    categoria: "Edición de video",
     anio: "2026",
     cliente: "Nombre del cliente",
-    rol: "Dirección de arte, Identidad visual",
+    rol: "Edición, Color, Montaje",
     resumen: "Descripción corta del proyecto en una línea.",
     descripcion:
       "Describe el reto, el proceso y el resultado del proyecto. Explica qué problema resolviste y cómo lo hiciste.",
     cita: "Una frase destacada sobre el proyecto o el aprendizaje principal.",
     enlace: "",
     imagen: "",
-    color: ["#ff5f3c", "#7a1cff"],
+    color: ["#BF6079", "#731641"],
     galeria: [],
   },
   {
-    id: "proyecto-dos",
+    id: "proyecto-3d",
     destacado: true,
     imagenHero: "",
-    titulo: "Proyecto Dos",
-    categoria: "Diseño Web",
+    titulo: "Proyecto 3D",
+    categoria: "Modelado 3D",
     anio: "2026",
-    cliente: "Nombre del cliente",
-    rol: "UX/UI, Desarrollo front-end",
+    cliente: "Proyecto académico",
+    rol: "Modelado, Texturizado, Render",
     resumen: "Descripción corta del proyecto en una línea.",
     descripcion:
       "Describe el reto, el proceso y el resultado del proyecto. Explica qué problema resolviste y cómo lo hiciste.",
     cita: "Una frase destacada sobre el proyecto o el aprendizaje principal.",
     enlace: "",
     imagen: "",
-    color: ["#00c2a8", "#003b73"],
+    color: ["#585936", "#282A0B"],
     galeria: [],
   },
   {
-    id: "proyecto-tres",
+    id: "proyecto-codigo",
     destacado: true,
     imagenHero: "",
-    titulo: "Proyecto Tres",
-    categoria: "Fotografía",
+    titulo: "Proyecto Código",
+    categoria: "Programación",
     anio: "2025",
     cliente: "Proyecto personal",
-    rol: "Fotografía, Edición",
+    rol: "Desarrollo, Diseño de interacción",
     resumen: "Descripción corta del proyecto en una línea.",
     descripcion:
       "Describe el reto, el proceso y el resultado del proyecto. Explica qué problema resolviste y cómo lo hiciste.",
     cita: "Una frase destacada sobre el proyecto o el aprendizaje principal.",
     enlace: "",
     imagen: "",
-    color: ["#f7c948", "#e4572e"],
+    color: ["#731641", "#141804"],
     galeria: [],
   },
   {
-    id: "proyecto-cuatro",
-    titulo: "Proyecto Cuatro",
-    categoria: "Motion",
+    id: "proyecto-marketing",
+    titulo: "Proyecto Marketing",
+    categoria: "Marketing digital",
     anio: "2025",
     cliente: "Nombre del cliente",
-    rol: "Animación, Video",
+    rol: "Estrategia, Contenido",
     resumen: "Descripción corta del proyecto en una línea.",
     descripcion:
       "Describe el reto, el proceso y el resultado del proyecto. Explica qué problema resolviste y cómo lo hiciste.",
     cita: "Una frase destacada sobre el proyecto o el aprendizaje principal.",
     enlace: "",
     imagen: "",
-    color: ["#c3f73a", "#1b998b"],
+    color: ["#BF6079", "#585936"],
     galeria: [],
   },
   {
-    id: "proyecto-cinco",
-    titulo: "Proyecto Cinco",
-    categoria: "Ilustración",
-    anio: "2024",
+    id: "proyecto-brief",
+    titulo: "Proyecto Brief",
+    categoria: "Brief creativo",
+    anio: "2025",
     cliente: "Nombre del cliente",
-    rol: "Ilustración, Editorial",
+    rol: "Concepto, Dirección creativa",
     resumen: "Descripción corta del proyecto en una línea.",
     descripcion:
       "Describe el reto, el proceso y el resultado del proyecto. Explica qué problema resolviste y cómo lo hiciste.",
     cita: "Una frase destacada sobre el proyecto o el aprendizaje principal.",
     enlace: "",
     imagen: "",
-    color: ["#ff8fab", "#5e2bff"],
-    galeria: [],
-  },
-  {
-    id: "proyecto-seis",
-    titulo: "Proyecto Seis",
-    categoria: "UX/UI",
-    anio: "2024",
-    cliente: "Nombre del cliente",
-    rol: "Investigación, Prototipado",
-    resumen: "Descripción corta del proyecto en una línea.",
-    descripcion:
-      "Describe el reto, el proceso y el resultado del proyecto. Explica qué problema resolviste y cómo lo hiciste.",
-    cita: "Una frase destacada sobre el proyecto o el aprendizaje principal.",
-    enlace: "",
-    imagen: "",
-    color: ["#4cc9f0", "#3a0ca3"],
+    color: ["#585936", "#141804"],
     galeria: [],
   },
 ];
 
 /* ---------- SERVICIOS / HABILIDADES ---------- */
 const SERVICIOS = [
-  { titulo: "Dirección de arte", texto: "Describe brevemente este servicio o habilidad." },
-  { titulo: "Identidad visual", texto: "Describe brevemente este servicio o habilidad." },
-  { titulo: "Diseño UX/UI", texto: "Describe brevemente este servicio o habilidad." },
-  { titulo: "Desarrollo web", texto: "Describe brevemente este servicio o habilidad." },
-  { titulo: "Motion & video", texto: "Describe brevemente este servicio o habilidad." },
+  { titulo: "Edición de video", texto: "Montaje, ritmo y color para contar historias que se sienten y se recuerdan." },
+  { titulo: "3D", texto: "Modelado, texturizado y render para dar volumen y presencia a las ideas." },
+  { titulo: "Programación", texto: "Experiencias web e interactivas donde el código también es una herramienta creativa." },
+  { titulo: "Marketing", texto: "Estrategia y contenido pensados para conectar con la audiencia correcta." },
+  { titulo: "Briefs creativos", texto: "Ideas claras desde el inicio: objetivos, concepto y dirección para cada proyecto." },
 ];
 
-/* ---------- HERRAMIENTAS (cinta animada) ---------- */
+/* ---------- HERRAMIENTAS (cinta animada) ----------
+   ← PENDIENTE: confirma cuáles usas */
 const HERRAMIENTAS = [
-  "Figma", "Illustrator", "Photoshop", "After Effects", "Blender",
-  "HTML", "CSS", "JavaScript", "Premiere", "InDesign",
+  "Premiere Pro", "After Effects", "DaVinci Resolve", "Blender",
+  "Figma", "Photoshop", "Illustrator", "HTML", "CSS", "JavaScript",
 ];
 
-/* ---------- EXPERIENCIA / EDUCACIÓN ---------- */
+/* ---------- EXPERIENCIA / EDUCACIÓN ----------
+   ← PENDIENTE: confirma años y agrega experiencia, cursos o premios */
 const TRAYECTORIA = [
-  { periodo: "2026 —", titulo: "Cargo o rol actual", lugar: "Empresa / Universidad" },
-  { periodo: "2024 — 2025", titulo: "Cargo o práctica", lugar: "Empresa" },
-  { periodo: "2022 — 2026", titulo: "Carrera / Pregrado", lugar: "Universidad El Bosque" },
-  { periodo: "2023", titulo: "Reconocimiento o premio", lugar: "Organización" },
+  { periodo: "Actualidad", titulo: "Creación Digital", lugar: "Universidad El Bosque" },
+  { periodo: "Año", titulo: "Formación en arte e ingeniería", lugar: "Institución" },
+  { periodo: "Año", titulo: "Experiencia, práctica o proyecto", lugar: "Empresa / Organización" },
 ];

@@ -81,7 +81,7 @@
         <div><span class="label">Navegación</span>${links.slice(0, 4).map(([t, h]) => `<a href="${h}">${t}</a>`).join("")}</div>
       </div>
       <div class="footer__bottom">
-        <span>© ${new Date().getFullYear()} ${esc(PERFIL.nombre)} ${esc(PERFIL.apellido)}. Todos los derechos reservados.</span>
+        <span>© ${new Date().getFullYear()} ${esc(PERFIL.marca)} · ${esc(PERFIL.nombre)} ${esc(PERFIL.apellido)}</span>
         <a href="#top">Volver arriba ↑</a>
       </div>`;
 
@@ -106,7 +106,8 @@
 
   /* ---------- Página de inicio ---------- */
   function renderHome() {
-    document.title = `${PERFIL.nombre} ${PERFIL.apellido} — Portafolio`;
+    document.title = `${PERFIL.marca} — ${PERFIL.nombre} ${PERFIL.apellido}`;
+    $("#aboutTitle").textContent = PERFIL.saludo;
     initHero();
 
     $("#slider").innerHTML = PROYECTOS.map((p) => `
@@ -240,7 +241,7 @@
     if (i < 0) i = 0;
     const p = PROYECTOS[i];
     const next = PROYECTOS[(i + 1) % PROYECTOS.length];
-    document.title = `${p.titulo} — ${PERFIL.nombre} ${PERFIL.apellido}`;
+    document.title = `${p.titulo} — ${PERFIL.marca}`;
 
     const gal = (p.galeria && p.galeria.length
       ? p.galeria.map((src) => `<img class="reveal" src="${esc(src)}" alt="${esc(p.titulo)}" loading="lazy">`)
