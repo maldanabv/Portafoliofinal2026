@@ -73,7 +73,7 @@
 
     $("#contacto").innerHTML = `
       <span class="label">✦ ¿Tienes un proyecto en mente?</span>
-      <a class="footer__cta" href="mailto:${esc(PERFIL.email)}" data-cursor="Escribir">Hablemos</a>
+      <a class="footer__cta" href="mailto:${esc(PERFIL.email)}" data-cursor="Escribir" data-split>Hablemos</a>
       <div class="footer__grid">
         <div><span class="label">Correo</span><a href="mailto:${esc(PERFIL.email)}">${esc(PERFIL.email)}</a><span>${esc(PERFIL.telefono)}</span></div>
         <div><span class="label">Ubicación</span><span>${esc(PERFIL.ciudad)}</span><span id="clock">--:--</span></div>
@@ -117,7 +117,7 @@
       </a>`).join("");
     $("#countProjects").textContent = pad(PROYECTOS.length);
 
-    $("#statement").innerHTML = PERFIL.declaracion.map((l) => `<span>${esc(l)}</span>`).join("");
+    $("#statement").innerHTML = PERFIL.declaracion.map((l) => `<span data-split>${esc(l)}</span>`).join("");
 
     $("#list").innerHTML = PROYECTOS.map((p, i) => `
       <a class="list__item" href="proyecto.html?id=${encodeURIComponent(p.id)}" data-i="${i}" data-hover>
@@ -197,7 +197,7 @@
         bar.style.animation = "none"; void bar.offsetWidth; bar.style.animation = "";
         if (k === i) el.classList.add("active");
       });
-      swap($("#fhTitle"), p.titulo, first);
+      swapLetters($("#fhTitle"), p.titulo, first);
       swap($("#fhYear"), p.anio, first);
       swap($("#fhCat"), p.categoria, first);
       $("#fhLink").href = `proyecto.html?id=${encodeURIComponent(p.id)}`;
@@ -251,7 +251,7 @@
     $("#project").innerHTML = `
       <section class="p-hero">
         <span class="label">${esc(p.categoria)} · ${esc(p.anio)}</span>
-        <h1>${esc(p.titulo)}</h1>
+        <h1 data-split>${esc(p.titulo)}</h1>
         <p class="p-hero__intro">${esc(p.resumen)}</p>
       </section>
       <div class="p-cover reveal">${media(p)}</div>
@@ -272,7 +272,7 @@
       <section class="p-gallery">${gal}</section>
       <a class="p-next" href="proyecto.html?id=${encodeURIComponent(next.id)}" data-cursor="Siguiente">
         <span class="label">Siguiente proyecto</span>
-        <h2>${esc(next.titulo)}</h2>
+        <h2 data-split>${esc(next.titulo)}</h2>
       </a>`;
   }
 
@@ -328,6 +328,57 @@
     });
   }
 
+  /* ---------- Letras que entran y salen ----------
+     Divide un texto en letras, cada una dentro de su propia máscara.
+     Las letras alternan dirección (arriba / abajo) y entran escalonadas. */
+  function splitLetters(el, text) {
+    text = text != null ? text : el.textContent;
+    el.setAttribute("aria-label", text);
+    let i = 0;
+    el.innerHTML = text.split(" ").map((word) => {
+      const letters = [...word].map((ch) => {
+        const d = i % 2 === 0 ? 1 : -1;
+        return `<span class="ch" aria-hidden="true"><span class="ch__in" style="--i:${i++};--d:${d}" data-ch="${esc(ch)}">${esc(ch)}</span></span>`;
+      }).join("");
+      i++;
+      return `<span class="word">${letters}</span>`;
+    }).join(" ");
+    el.classList.add("split");
+  }
+
+  const whenReady = (fn) => {
+    if (document.body.classList.contains("ready")) fn();
+    else document.addEventListener("site:ready", fn, { once: true });
+  };
+
+  // Título del hero: las letras salen y entran las del nuevo proyecto
+  function swapLetters(el, text, first) {
+    if (first) {
+      splitLetters(el, text);
+      whenReady(() => requestAnimationFrame(() => el.classList.add("in")));
+      return;
+    }
+    el.classList.remove("in");
+    clearTimeout(el._t);
+    el._t = setTimeout(() => {
+      splitLetters(el, text);
+      void el.offsetWidth;
+      el.classList.add("in");
+    }, 520);
+  }
+
+  // Títulos con data-split: entran al aparecer en pantalla y salen al irse
+  function initSplit() {
+    const els = [...document.querySelectorAll("[data-split]")];
+    els.forEach((el) => splitLetters(el));
+    whenReady(() => {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => en.target.classList.toggle("in", en.isIntersecting));
+      }, { rootMargin: "-12% 0px -12% 0px" });
+      els.forEach((el) => io.observe(el));
+    });
+  }
+
   /* ---------- Aparición al hacer scroll ---------- */
   function initReveal() {
     const io = new IntersectionObserver((entries) => {
@@ -339,7 +390,11 @@
   /* ---------- Preloader ---------- */
   function initLoader() {
     const l = $("#loader");
-    const finish = () => { document.body.classList.remove("is-loading"); document.body.classList.add("ready"); };
+    const finish = () => {
+      document.body.classList.remove("is-loading");
+      document.body.classList.add("ready");
+      document.dispatchEvent(new Event("site:ready"));
+    };
     if (!l) return finish();
     const n = $(".loader__count", l);
     let v = 0;
@@ -355,6 +410,7 @@
   if (document.body.dataset.page === "home") renderHome();
   if (document.body.dataset.page === "project") renderProject();
   initCursor();
+  initSplit();
   initReveal();
   initLoader();
 })();
