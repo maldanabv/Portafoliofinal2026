@@ -10,6 +10,7 @@
   --soft: #b4b4b2;
   --line: rgba(11, 11, 11, 0.16);
   --pill: rgba(11, 11, 11, 0.13);
+  --nav-bg: rgba(11, 11, 11, 0.18);
   --glass: rgba(232, 232, 230, 0.78);
   --accent: #0b0b0b;
   --font-display: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
@@ -26,6 +27,7 @@
   --soft: #4a4a48;
   --line: rgba(239, 239, 237, 0.16);
   --pill: rgba(239, 239, 237, 0.12);
+  --nav-bg: rgba(239, 239, 237, 0.16);
   --glass: rgba(14, 14, 14, 0.78);
   --accent: #efefed;
 }
@@ -119,14 +121,22 @@ body.menu-open .header { transform: none; background: transparent; backdrop-filt
 .logo { font-family: var(--font-display); font-size: 30px; font-weight: 700; letter-spacing: -0.06em; justify-self: start; line-height: 1; }
 .logo img { height: 34px; }
 .header__nav {
-  display: flex; gap: 6px; padding: 12px; background: var(--pill);
-  border-radius: 3px; font-size: 20px; font-weight: 500; letter-spacing: -0.01em;
+  display: flex; align-items: center; padding: 12px 13px; background: var(--nav-bg);
+  border-radius: 3px; font-size: 20px; font-weight: 500; letter-spacing: -0.015em;
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
 }
-.header__nav a { padding: 3px 12px 4px; border-radius: 2px; line-height: 1.25; transition: background 0.3s, color 0.3s; }
-.header__nav a + a { margin-left: 20px; }
-.header__nav a:hover { background: var(--pill); }
-.header__nav a.active { background: var(--fg); color: var(--bg); }
+.header__nav a {
+  position: relative; padding: 4px 11px 4px; border-radius: 2px; line-height: 24px;
+  color: var(--fg); transition: color 0.35s var(--ease);
+}
+.header__nav a + a { margin-left: 40px; }
+.header__nav a::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--fg);
+  transform: scaleY(0); transform-origin: bottom; transition: transform 0.4s var(--ease);
+}
+.header__nav a:hover::before, .header__nav a.active::before { transform: scaleY(1); }
+.header__nav a:hover, .header__nav a.active { color: var(--bg); }
+.header__nav a { isolation: isolate; }
 .header__right { display: flex; align-items: center; gap: 22px; justify-self: end; }
 .pill-btn {
   display: inline-flex; align-items: center; padding: 12px 38px; border: 2px solid var(--fg); border-radius: 100px;
@@ -423,7 +433,7 @@ body.ready .fh .sw { transition-delay: 0s; }
 /* ---------- Responsive ---------- */
 @media (max-width: 1100px) {
   .header__nav { font-size: 16px; padding: 8px; }
-  .header__nav a + a { margin-left: 6px; }
+  .header__nav a + a { margin-left: 10px; }
   .pill-btn { font-size: 16px; padding: 10px 24px; }
   .fh__meta, .fh__bar, .fh__nav button { font-size: 16px; }
 }
