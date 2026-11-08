@@ -40,6 +40,7 @@ const PERFIL = {
   },
   foto: "img/maria-jose.jpg",
   redes: [
+    { nombre: "Instagram", url: "https://www.instagram.com/mjdigitalstudio0/" },
     { nombre: "LinkedIn", url: "https://www.linkedin.com/in/maria-jose-aldana-bravo-02a86033b/" },
     { nombre: "GitHub", url: "https://github.com/maldanabv" },
   ],
