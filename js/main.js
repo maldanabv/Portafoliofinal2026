@@ -120,17 +120,92 @@
     $$("[data-i18n-aria]").forEach((el) => el.setAttribute("aria-label", ui(el.dataset.i18nAria)));
   }
 
+  /* ---------- Proyectos destacados: panel de información ---------- */
+  let scIndex = 0;
+  function setShowcase(i, force) {
+    if (i === scIndex && !force) return;
+    scIndex = i;
+    const p = PROYECTOS[i];
+    $("#scClient").textContent = t(p.cliente);
+    $("#scRole").textContent = t(p.rol);
+    $("#scCat").textContent = `${t(p.categoria)} · ${p.anio}`;
+    $("#scCount").textContent = `${pad(i + 1)}/${pad(PROYECTOS.length)}`;
+    $("#scLink").href = `proyecto.html?id=${encodeURIComponent(p.id)}`;
+    const title = $("#scTitle");
+    if (!title.classList.contains("split")) { splitLetters(title, t(p.titulo)); whenReady(() => title.classList.add("in")); }
+    else setSplitText(title, t(p.titulo), 380);
+    $$(".sc-card").forEach((c) => c.classList.toggle("is-active", +c.dataset.i === i));
+  }
+
+  function initShowcase() {
+    const track = $("#slider");
+    // Al pasar el mouse por una imagen
+    track.addEventListener("mouseover", (e) => {
+      const c = e.target.closest(".sc-card");
+      if (c) setShowcase(+c.dataset.i);
+    });
+    // Al desplazar la tira (arrastre, rueda o dedo): la imagen más cercana al borde izquierdo
+    let raf = 0;
+    track.addEventListener("scroll", () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const left = track.getBoundingClientRect().left;
+        let best = 0, dist = Infinity;
+        $$(".sc-card", track).forEach((c) => {
+          const d = Math.abs(c.getBoundingClientRect().left - left - 16);
+          if (d < dist) { dist = d; best = +c.dataset.i; }
+        });
+        setShowcase(best);
+      });
+    }, { passive: true });
+  }
+
+  /* ---------- Marquesina grande arrastrable ---------- */
+  function initDragMarquee() {
+    const wrap = $("#dmarquee"), track = $("#dmarqueeTrack");
+    if (!wrap) return;
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let x = 0, vel = 0, dragging = false, lastX = 0, visible = false;
+    const speed = still ? 0 : -0.7;
+    new IntersectionObserver(([en]) => (visible = en.isIntersecting)).observe(wrap);
+    (function loop() {
+      if (visible) {
+        if (!dragging) { x += speed + vel; vel *= 0.94; }
+        const w = track.scrollWidth / 2;
+        if (w > 0) { if (x <= -w) x += w; if (x > 0) x -= w; }
+        track.style.transform = `translate3d(${x.toFixed(1)}px,0,0)`;
+      }
+      requestAnimationFrame(loop);
+    })();
+    wrap.addEventListener("pointerdown", (e) => { dragging = true; lastX = e.clientX; wrap.classList.add("is-dragging"); wrap.setPointerCapture(e.pointerId); });
+    wrap.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX; lastX = e.clientX;
+      x += dx; vel = dx * 0.6;
+    });
+    const end = () => { dragging = false; wrap.classList.remove("is-dragging"); };
+    wrap.addEventListener("pointerup", end);
+    wrap.addEventListener("pointercancel", end);
+  }
+
   /* ---------- Página de inicio ---------- */
   function renderHome() {
     document.title = `${PERFIL.marca} — ${PERFIL.nombre} ${PERFIL.apellido}`;
     setSplitText($("#aboutTitle"), t(PERFIL.saludo));
     $("#introText").textContent = t(PERFIL.intro);
 
-    $("#slider").innerHTML = PROYECTOS.map((p) => `
-      <a class="card" href="proyecto.html?id=${encodeURIComponent(p.id)}" data-cursor="view">
-        <div class="card__media">${media(p)}</div>
-        <div class="card__meta"><h3 class="card__title">${esc(t(p.titulo))}</h3><span class="card__info">${esc(t(p.categoria))} · ${esc(p.anio)}</span></div>
+    // Proyectos destacados: tira de imágenes de distintos tamaños + panel de información
+    $("#slider").innerHTML = PROYECTOS.map((p, i) => `
+      <a class="sc-card${i === scIndex ? " is-active" : ""}" href="proyecto.html?id=${encodeURIComponent(p.id)}" data-i="${i}" data-cursor="view">
+        <div class="sc-card__media">${media(p)}</div>
+        <span class="sc-card__tag">${esc(t(p.titulo))}</span>
       </a>`).join("");
+    setShowcase(scIndex, true);
+
+    // Ver todos + marquesina con los servicios
+    $("#seeAllCount").textContent = `(${pad(PROYECTOS.length)})`;
+    const words = SERVICIOS.map((s) => `<span class="dmarquee__item">${esc(t(s.titulo))}<span class="dmarquee__star" aria-hidden="true">✦</span></span>`).join("");
+    $("#dmarqueeTrack").innerHTML = words + words + words + words;
     $("#statement").innerHTML = t(PERFIL.declaracion).map((l) => `<span data-split>${esc(l)}</span>`).join("");
 
     // Proyectos agrupados por sección
@@ -657,6 +732,8 @@
   if (isHome) {
     heroCtl = initHero();
     initDrag($("#slider"));
+    initShowcase();
+    initDragMarquee();
     initListPreview();
     initVideos();
   }

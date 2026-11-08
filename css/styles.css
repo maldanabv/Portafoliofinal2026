@@ -489,6 +489,105 @@ body.ready .fh .sw { transition-delay: 0s; }
 .reveal.in { opacity: 1; transform: none; }
 
 /* =========================================================
+   PROYECTOS DESTACADOS: PANEL DE INFORMACIÓN + TIRA DE IMÁGENES
+   Izquierda: cliente, rol, título y contador.
+   Derecha: imágenes de distintos tamaños alineadas abajo.
+   ========================================================= */
+.showcase {
+  display: grid; grid-template-columns: minmax(260px, 1fr) 3fr;
+  border-bottom: 1px solid var(--line);
+}
+.showcase__info {
+  display: flex; flex-direction: column; gap: 20px;
+  padding: 24px var(--gutter); border-right: 1px solid var(--line);
+}
+.showcase__row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.showcase__info strong { display: block; margin-top: 3px; font-size: 16px; font-weight: 500; line-height: 1.35; }
+.showcase__view {
+  font-size: 14px; white-space: nowrap; text-decoration: underline;
+  text-underline-offset: 4px; transition: color 0.3s;
+}
+.showcase__view:hover { color: var(--rosa); }
+.showcase__title {
+  margin-top: auto; font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(38px, 4.4vw, 76px); line-height: 1; letter-spacing: -0.02em;
+}
+.showcase__cat { font-size: 14px; color: var(--muted); }
+.showcase__count { font-size: 14px; font-variant-numeric: tabular-nums; }
+
+.showcase__track {
+  display: flex; align-items: flex-end; gap: 16px;
+  height: clamp(380px, 70vh, 660px);
+  padding: 24px var(--gutter) 24px 16px;
+  overflow-x: auto; scrollbar-width: none; cursor: grab;
+}
+.showcase__track::-webkit-scrollbar { display: none; }
+.showcase__track.is-dragging { cursor: grabbing; }
+.showcase__track.is-dragging a { pointer-events: none; }
+
+.sc-card {
+  position: relative; flex: 0 0 auto; height: 72%; aspect-ratio: 3 / 4;
+  border-radius: 4px; overflow: hidden; background: var(--bg-2);
+  transition: filter 0.45s var(--ease), opacity 0.45s var(--ease);
+}
+.sc-card:nth-child(4n + 1) { height: 100%; aspect-ratio: 4 / 5; }
+.sc-card:nth-child(4n + 3) { height: 62%; aspect-ratio: 1 / 1; }
+.sc-card:nth-child(4n) { height: 80%; aspect-ratio: 16 / 11; }
+.sc-card__media, .sc-card__media > * { width: 100%; height: 100%; object-fit: cover; }
+.sc-card__media img { transition: transform 1.2s var(--ease); }
+.sc-card:hover .sc-card__media img { transform: scale(1.06); }
+.sc-card__tag {
+  position: absolute; top: 12px; left: 12px; padding: 5px 11px; border-radius: 4px;
+  background: var(--rosa); color: var(--crema); font-size: 13px; line-height: 1.2;
+  opacity: 0; transform: translateY(-6px); transition: opacity 0.35s, transform 0.35s var(--ease);
+}
+.sc-card.is-active .sc-card__tag, .sc-card:hover .sc-card__tag { opacity: 1; transform: none; }
+.sc-card.is-active { box-shadow: 0 0 0 1px var(--rosa); }
+@media (hover: hover) {
+  .showcase__track:hover .sc-card:not(:hover) { filter: grayscale(0.5); opacity: 0.75; }
+}
+
+/* =========================================================
+   VER TODOS + FRANJAS QUE SUBEN + MARQUESINA ARRASTRABLE
+   ========================================================= */
+.see-all { text-align: center; padding: 30px var(--gutter) 70px; }
+.see-all__link {
+  font-family: var(--font-display); font-weight: 700; font-size: clamp(34px, 5vw, 84px); line-height: 1.05;
+  text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 10px;
+  transition: color 0.3s;
+}
+.see-all__link sup {
+  display: inline-block; margin-left: 6px; font-family: var(--font-body); font-weight: 500;
+  font-size: 0.26em; vertical-align: top; text-decoration: none;
+}
+.see-all__link:hover { color: var(--rosa); }
+
+.stripes { display: flex; align-items: flex-end; height: clamp(160px, 30vw, 420px); }
+.stripes span {
+  flex: 1; height: 100%; background: var(--fg);
+  transform: scaleY(0); transform-origin: bottom; will-change: transform;
+  box-shadow: 0 0 0 1px var(--fg); /* evita líneas finas entre franjas */
+}
+.band { background: var(--fg); color: var(--bg); padding: 30px 0 130px; overflow: hidden; margin-top: -1px; }
+.dmarquee { overflow: hidden; cursor: grab; user-select: none; touch-action: pan-y; }
+.dmarquee.is-dragging { cursor: grabbing; }
+.dmarquee__track { display: flex; width: max-content; will-change: transform; }
+.dmarquee__item {
+  display: flex; align-items: center; gap: 0.35em; padding-right: 0.35em;
+  font-family: var(--font-display); font-weight: 700; white-space: nowrap;
+  font-size: clamp(56px, 9.5vw, 170px); line-height: 1.15; letter-spacing: -0.02em;
+}
+.dmarquee__star { color: var(--rosa); font-size: 0.42em; }
+
+@media (max-width: 899px) {
+  .showcase { grid-template-columns: 1fr; }
+  .showcase__info { border-right: 0; border-bottom: 1px solid var(--line); gap: 14px; padding-top: 20px; padding-bottom: 20px; }
+  .showcase__title { margin-top: 4px; }
+  .showcase__track { height: 56vh; min-height: 340px; padding-left: var(--gutter); }
+  .band { padding-bottom: 90px; }
+}
+
+/* =========================================================
    PRESENTACIÓN CORTA BAJO PROYECTOS DESTACADOS
    Texto en la columna derecha (1/3), líneas arriba y abajo
    y botón con ícono redondo. Se mueve al hacer scroll.

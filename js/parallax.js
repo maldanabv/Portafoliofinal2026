@@ -29,3 +29,33 @@
   window.addEventListener("resize", onScroll);
   update();
 })();
+
+/* =========================================================
+   FRANJAS QUE SUBEN AL HACER SCROLL (antes de la marquesina)
+   Cada franja crece desde abajo con un pequeño retraso,
+   formando una escalera que revela la banda oscura.
+   ========================================================= */
+(function () {
+  const box = document.querySelector(".stripes");
+  if (!box) return;
+  const bars = [...box.children];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+  let ticking = false;
+  function update() {
+    ticking = false;
+    if (reduce.matches) { bars.forEach((b) => (b.style.transform = "none")); return; }
+    const r = box.getBoundingClientRect();
+    const vh = innerHeight;
+    // 0 cuando las franjas asoman por abajo, 1 cuando llegan a la mitad de la pantalla
+    const p = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.5 + r.height)));
+    bars.forEach((b, i) => {
+      const delay = [0.12, 0, 0.22, 0.08, 0.3, 0.16][i % 6]; // orden irregular, como escalones
+      const s = Math.min(1, Math.max(0, (p - delay) / 0.55));
+      b.style.transform = `scaleY(${s.toFixed(3)})`;
+    });
+  }
+  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  update();
+})();

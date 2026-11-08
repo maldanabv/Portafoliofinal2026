@@ -69,6 +69,8 @@ const UI = {
     keyData: "✦ En cifras",
     gallery: "✦ Galería",
     aboutMore: "Conóceme más",
+    seeAll: "Ver todos los proyectos",
+    viewDetail: "Ver detalle",
   },
   en: {
     langBtn: "ESP",
@@ -136,5 +138,7 @@ const UI = {
     keyData: "✦ In numbers",
     gallery: "✦ Gallery",
     aboutMore: "More about me",
+    seeAll: "See all projects",
+    viewDetail: "View detail",
   },
 };

@@ -49,8 +49,20 @@
       <span class="label"><span class="star">✦</span> <span data-i18n="featured">Proyectos destacados</span></span>
       <span class="label" data-i18n="dragExplore">Arrastra para explorar →</span>
     </div>
-    <section class="slider">
-      <div class="slider__track" id="slider" data-cursor="drag"></div>
+    <section class="showcase" id="showcase">
+      <aside class="showcase__info">
+        <div class="showcase__row">
+          <div><span class="label" data-i18n="client">Cliente</span><strong id="scClient"></strong></div>
+          <a class="showcase__view" id="scLink" href="#" data-hover data-i18n="viewDetail">Ver detalle</a>
+        </div>
+        <div><span class="label" data-i18n="role">Rol</span><strong id="scRole"></strong></div>
+        <h3 class="showcase__title" id="scTitle"></h3>
+        <div class="showcase__row">
+          <span class="showcase__cat" id="scCat"></span>
+          <span class="showcase__count" id="scCount">01/05</span>
+        </div>
+      </aside>
+      <div class="showcase__track" id="slider" data-cursor="drag"></div>
     </section>
 
     <!-- PRESENTACIÓN CORTA (columna derecha, con movimiento al hacer scroll) -->
@@ -74,6 +86,21 @@
       </div>
       <div>
         <h2 class="statement__text" id="statement"></h2>
+      </div>
+    </section>
+
+    <!-- VER TODOS + FRANJAS QUE SUBEN + MARQUESINA ARRASTRABLE -->
+    <div class="see-all">
+      <a class="see-all__link" href="#workSections" data-hover>
+        <span data-i18n="seeAll">Ver todos los proyectos</span><sup id="seeAllCount">(05)</sup>
+      </a>
+    </div>
+    <section class="stripes-band" aria-label="Servicios">
+      <div class="stripes" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="band">
+        <div class="dmarquee" id="dmarquee" data-cursor="drag">
+          <div class="dmarquee__track" id="dmarqueeTrack"></div>
+        </div>
       </div>
     </section>
 
