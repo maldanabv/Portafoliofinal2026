@@ -31,6 +31,7 @@
   --accent: var(--rosa);
   --chip: var(--vino);
   --chip-fg: var(--crema);
+  --logo-j: var(--vino);
   --footer-bg: var(--vino);
   --footer-fg: var(--crema);
   --font-display: "Rufina", Georgia, "Times New Roman", serif;
@@ -53,6 +54,7 @@
   --accent: var(--rosa);
   --chip: var(--rosa);
   --chip-fg: var(--noche);
+  --logo-j: var(--rosa);
   --footer-bg: var(--musgo);
   --footer-fg: var(--crema);
 }
@@ -145,8 +147,16 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .header.scrolled { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding-top: 16px; padding-bottom: 16px; }
 .header.hide { transform: translateY(-110%); }
 body.menu-open .header { transform: none; background: transparent; backdrop-filter: none; }
-.logo { font-family: var(--font-display); font-size: 30px; font-weight: 700; letter-spacing: -0.02em; justify-self: start; line-height: 1; }
-.logo img { height: 34px; }
+/* Logo MJ Digital Studio: la M en el color del texto y la J en vino, cruzada sobre la M */
+.logo {
+  display: inline-flex; align-items: center; justify-self: start;
+  font-family: var(--font-display); font-size: 21px; line-height: 1; color: var(--fg);
+}
+.logo img { height: 2.4em; width: auto; }
+.logo__mark { display: inline-flex; align-items: flex-start; font-size: 2.05em; font-weight: 700; letter-spacing: 0; margin-right: 0.12em; }
+.logo__m { position: relative; z-index: 1; }
+.logo__j { color: var(--logo-j); margin-left: -0.2em; transform: translateY(0.13em); position: relative; z-index: 2; }
+.logo__txt { font-weight: 400; letter-spacing: 0; white-space: nowrap; padding-top: 0.18em; }
 .header__nav {
   display: flex; align-items: center; padding: 12px 13px; background: var(--nav-bg);
   border-radius: 3px; font-size: 20px; font-weight: 500; letter-spacing: 0;
@@ -184,6 +194,13 @@ body.menu-open .menu-btn i::before { top: 50%; transform: rotate(45deg); }
 body.menu-open .menu-btn i::after { top: 50%; transform: rotate(-45deg); }
 .theme-btn { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid currentColor; position: relative; overflow: hidden; }
 .theme-btn::after { content: ""; position: absolute; inset: 0 50% 0 0; background: currentColor; }
+/* Botón de idioma: mini subtítulo ENG / ESP */
+.lang-btn {
+  font-family: var(--font-body); font-size: 12px; line-height: 1; letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 7px 10px 6px; border: 1px solid var(--line); border-radius: 100px; color: var(--fg);
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+.lang-btn:hover { background: var(--chip); color: var(--chip-fg); border-color: var(--chip); }
 
 /* ---------- Menú pantalla completa ---------- */
 .menu {
@@ -475,7 +492,7 @@ body.ready .fh .sw { transition-delay: 0s; }
 /* Pantallas grandes */
 @media (min-width: 1920px) {
   .header { padding-top: 48px; }
-  .logo { font-size: 34px; }
+  .logo { font-size: 23px; }
   .header__nav { font-size: 22px; padding: 14px 15px; }
   .header__nav a { line-height: 26px; padding: 5px 13px; }
   .header__nav a + a { margin-left: 48px; }
@@ -485,7 +502,7 @@ body.ready .fh .sw { transition-delay: 0s; }
 /* Laptop */
 @media (max-width: 1439px) {
   .header { padding-top: 32px; }
-  .logo { font-size: 28px; }
+  .logo { font-size: 20px; }
   .header__nav { font-size: 18px; padding: 10px 11px; }
   .header__nav a { line-height: 22px; padding: 4px 10px; }
   .header__nav a + a { margin-left: 28px; }
@@ -495,7 +512,7 @@ body.ready .fh .sw { transition-delay: 0s; }
 /* Laptop pequeño / tablet horizontal */
 @media (max-width: 1199px) {
   .header { padding-top: 26px; }
-  .logo { font-size: 26px; }
+  .logo { font-size: 17px; }
   .header__nav { font-size: 16px; padding: 8px 9px; }
   .header__nav a { line-height: 20px; padding: 4px 9px; }
   .header__nav a + a { margin-left: 14px; }
@@ -507,7 +524,7 @@ body.ready .fh .sw { transition-delay: 0s; }
 /* Tablet vertical: la barra sigue arriba; "Contáctame" se oculta (ya está en la barra) */
 @media (max-width: 899px) {
   .header { padding-top: 20px; }
-  .logo { font-size: 24px; }
+  .logo { font-size: 16px; }
   .header__nav { font-size: 15px; padding: 6px 7px; }
   .header__nav a { padding: 4px 9px; }
   .header__nav a + a { margin-left: 4px; }
@@ -537,6 +554,8 @@ body.ready .fh .sw { transition-delay: 0s; }
 /* Móvil pequeño */
 @media (max-width: 379px) {
   .header__nav { font-size: 12.5px; padding: 5px; left: 8px; right: 8px; }
+  .menu-btn span { display: none; }
+  .header__right { gap: 12px; }
   .header__nav a { padding: 6px 6px; }
 }
 

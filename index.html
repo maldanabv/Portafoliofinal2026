@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>MJ Digital Studio</title>
   <meta name="description" content="MJ Digital Studio — Portafolio de María José Aldana Bravo: edición de video, 3D, programación, marketing y briefs creativos.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23F4EDE8'/%3E%3Ctext x='6' y='46' font-family='Georgia,serif' font-weight='700' font-size='40' fill='%23282A0B'%3EM%3C/text%3E%3Ctext x='35' y='50' font-family='Georgia,serif' font-weight='700' font-size='40' fill='%23731641'%3EJ%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Average+Sans&family=Rufina:wght@400;700&display=swap" rel="stylesheet">
@@ -14,7 +15,7 @@
 
   <!-- Preloader -->
   <div class="loader" id="loader">
-    <span class="label">Cargando portafolio</span>
+    <span class="label" data-i18n="loading">Cargando portafolio</span>
     <span class="loader__count">0</span>
   </div>
 
@@ -24,39 +25,39 @@
 
   <main>
     <!-- HERO -->
-    <section class="fh" id="inicio" data-cursor="Arrastrar">
+    <section class="fh" id="inicio" data-cursor="drag">
       <div class="fh__media" id="fhMedia"></div>
-      <h1 class="fh__title"><a class="sw-wrap" id="fhLink" href="#" data-cursor="Ver"><span id="fhTitle"></span></a></h1>
+      <h1 class="fh__title"><a class="sw-wrap" id="fhLink" href="#" data-cursor="view"><span id="fhTitle"></span></a></h1>
       <div class="fh__meta">
         <span class="sw-wrap"><span class="sw" id="fhYear"></span></span>
         <span class="sw-wrap"><span class="sw" id="fhCat"></span></span>
       </div>
       <div class="fh__tabs" id="fhTabs"></div>
       <div class="fh__bar">
-        <span class="fh__drag">Arrastra para explorar</span>
+        <span class="fh__drag" data-i18n="drag">Arrastra para explorar</span>
         <div class="fh__nav">
-          <button id="fhPrev" aria-label="Anterior" data-hover>←</button>
-          <span>Navegar</span>
-          <button id="fhNext" aria-label="Siguiente" data-hover>→</button>
+          <button id="fhPrev" data-i18n-aria="prev" aria-label="Anterior" data-hover>←</button>
+          <span data-i18n="navigate">Navegar</span>
+          <button id="fhNext" data-i18n-aria="next" aria-label="Siguiente" data-hover>→</button>
         </div>
-        <span>Proyecto destacado</span>
+        <span data-i18n="featuredProject">Proyecto destacado</span>
       </div>
     </section>
 
     <!-- PROYECTOS DESTACADOS (slider arrastrable) -->
     <div class="sec-head" id="proyectos">
-      <span class="label"><span class="star">✦</span> Proyectos destacados</span>
-      <span class="label">Arrastra para explorar →</span>
+      <span class="label"><span class="star">✦</span> <span data-i18n="featured">Proyectos destacados</span></span>
+      <span class="label" data-i18n="dragExplore">Arrastra para explorar →</span>
     </div>
     <section class="slider">
-      <div class="slider__track" id="slider" data-cursor="Arrastrar"></div>
+      <div class="slider__track" id="slider" data-cursor="drag"></div>
     </section>
 
     <!-- DECLARACIÓN -->
     <section class="statement">
       <div class="statement__side">
-        <span class="label"><span class="star">✦</span> Enfoque</span>
-        <a class="btn" href="#sobre-mi" data-hover>Conóceme más →</a>
+        <span class="label"><span class="star">✦</span> <span data-i18n="focus">Enfoque</span></span>
+        <a class="btn" href="#sobre-mi" data-hover data-i18n="knowMore">Conóceme más →</a>
       </div>
       <div>
         <h2 class="statement__text" id="statement"></h2>
@@ -65,14 +66,14 @@
 
     <!-- ARCHIVO / LISTA DE PROYECTOS -->
     <div class="sec-head">
-      <span class="label"><span class="star">✦</span> Todos los proyectos</span>
+      <span class="label"><span class="star">✦</span> <span data-i18n="allProjects">Todos los proyectos</span></span>
       <span class="label" id="countProjects">00</span>
     </div>
     <section class="list" id="list"></section>
     <div class="list__preview" id="listPreview"></div>
 
     <!-- HERRAMIENTAS -->
-    <section aria-label="Herramientas">
+    <section data-i18n-aria="tools" aria-label="Herramientas">
       <div class="marquee"><div class="marquee__inner"></div></div>
       <div class="marquee marquee--rev"><div class="marquee__inner"></div></div>
     </section>
@@ -80,8 +81,8 @@
     <!-- SERVICIOS -->
     <section class="services" id="servicios">
       <div>
-        <span class="label"><span class="star">✦</span> Qué hago</span>
-        <h2 style="margin-top:16px" data-split>Servicios y habilidades</h2>
+        <span class="label"><span class="star">✦</span> <span data-i18n="whatIDo">Qué hago</span></span>
+        <h2 style="margin-top:16px" data-split data-i18n="servicesTitle">Servicios y habilidades</h2>
       </div>
       <ul class="services__list" id="services"></ul>
     </section>
@@ -90,7 +91,7 @@
     <section class="about" id="sobre-mi">
       <div class="about__photo reveal" id="aboutPhoto"></div>
       <div>
-        <span class="label"><span class="star">✦</span> Sobre mí</span>
+        <span class="label"><span class="star">✦</span> <span data-i18n="about">Sobre mí</span></span>
         <h2 style="margin-top:16px" id="aboutTitle" data-split></h2>
         <div class="about__text" id="aboutText"></div>
         <div class="about__actions" id="aboutActions"></div>
@@ -99,13 +100,14 @@
 
     <!-- TRAYECTORIA -->
     <section class="timeline">
-      <h2 data-split>Trayectoria</h2>
+      <h2 data-split data-i18n="timeline">Trayectoria</h2>
       <ul id="timeline"></ul>
     </section>
   </main>
 
   <footer class="footer" id="contacto"></footer>
 
+  <script src="js/i18n.js"></script>
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
 </body>
