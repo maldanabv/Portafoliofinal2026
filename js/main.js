@@ -67,9 +67,15 @@
   const redesHTML = () =>
     PERFIL.redes.map((r) => `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.nombre)}</a>`).join("");
 
+  // El menú completo incluye también Videos y Reconocimientos
+  const menuLinks = () => {
+    const l = links();
+    return [...l.slice(0, 4), [ui("nav_videos"), `${base}#videos`], [ui("nav_certs"), `${base}#reconocimientos`], l[4]];
+  };
+
   function renderMenu() {
     $("#menu").innerHTML = `
-      <ul class="menu__links">${links().map(([txt, h], i) => `<li><a href="${h}">${esc(txt)}<sup>${pad(i + 1)}</sup></a></li>`).join("")}</ul>
+      <ul class="menu__links">${menuLinks().map(([txt, h], i) => `<li><a href="${h}">${esc(txt)}<sup>${pad(i + 1)}</sup></a></li>`).join("")}</ul>
       <div class="menu__info">
         <span class="label">${esc(ui("contact"))}</span>
         <a href="mailto:${esc(PERFIL.email)}">${esc(PERFIL.email)}</a>
@@ -124,17 +130,49 @@
         <div class="card__media">${media(p)}</div>
         <div class="card__meta"><h3 class="card__title">${esc(t(p.titulo))}</h3><span class="card__info">${esc(t(p.categoria))} · ${esc(p.anio)}</span></div>
       </a>`).join("");
-    $("#countProjects").textContent = pad(PROYECTOS.length);
-
     $("#statement").innerHTML = t(PERFIL.declaracion).map((l) => `<span data-split>${esc(l)}</span>`).join("");
 
-    $("#list").innerHTML = PROYECTOS.map((p, i) => `
-      <a class="list__item" href="proyecto.html?id=${encodeURIComponent(p.id)}" data-i="${i}" data-hover>
-        <span class="list__num">${pad(i + 1)}</span>
-        <span class="list__title">${esc(t(p.titulo))}</span>
-        <span class="list__cat">${esc(t(p.categoria))}</span>
-        <span class="list__year">${esc(p.anio)}</span>
-      </a>`).join("");
+    // Proyectos agrupados por sección
+    $("#workSections").innerHTML = SECCIONES.map((sec) => {
+      const items = PROYECTOS.map((p, i) => ({ p, i })).filter((x) => x.p.seccion === sec.id);
+      if (!items.length) return "";
+      return `
+        <div class="sec-head" id="sec-${esc(sec.id)}">
+          <span class="label"><span class="star">✦</span> ${esc(t(sec.titulo))}</span>
+          <span class="label">${pad(items.length)}</span>
+        </div>
+        <p class="work__intro">${esc(t(sec.texto))}</p>
+        <section class="list">${items.map(({ p, i }, k) => `
+          <a class="list__item" href="proyecto.html?id=${encodeURIComponent(p.id)}" data-i="${i}" data-hover>
+            <span class="list__num">${pad(k + 1)}</span>
+            <span class="list__title">${esc(t(p.titulo))}</span>
+            <span class="list__cat">${esc(t(p.categoria))}</span>
+            <span class="list__year">${esc(p.anio)}</span>
+          </a>`).join("")}
+        </section>`;
+    }).join("");
+
+    // Videos (solo se crean una vez para no reiniciar la reproducción al cambiar idioma)
+    const grid = $("#videoGrid");
+    if (!grid.children.length) {
+      grid.innerHTML = VIDEOS.map((v, i) => `
+        <figure class="vcard vcard--${esc(v.formato || "vertical")} reveal" data-v="${i}">
+          <div class="vcard__media">
+            <video src="${esc(v.src)}#t=0.1" preload="metadata" playsinline muted loop></video>
+            <button class="vcard__play" type="button" data-hover><span aria-hidden="true">▶</span></button>
+          </div>
+          <figcaption><h3></h3><p></p></figcaption>
+        </figure>`).join("");
+    }
+    $$(".vcard", grid).forEach((card) => {
+      const v = VIDEOS[card.dataset.v];
+      $("h3", card).textContent = t(v.titulo);
+      $("p", card).textContent = t(v.texto);
+      $(".vcard__play", card).setAttribute("aria-label", `${ui("play")}: ${t(v.titulo)}`);
+    });
+
+    // Certificados
+    $("#certList").innerHTML = CERTIFICADOS.map((c) => certHTML(c, true)).join("");
 
     const tools = HERRAMIENTAS.map((h) => `<span>${esc(t(h))}</span>`).join("");
     $$(".marquee__inner").forEach((m) => (m.innerHTML = tools + tools));
@@ -155,6 +193,26 @@
 
     $("#timeline").innerHTML = TRAYECTORIA.map((x) => `
       <li class="reveal"><span>${esc(t(x.periodo))}</span><strong>${esc(t(x.titulo))}</strong><span>${esc(t(x.lugar))}</span></li>`).join("");
+  }
+
+  /* ---------- Tarjeta de certificado (inicio y página de proyecto) ---------- */
+  function certHTML(c, withProject) {
+    const title = t(c.titulo);
+    return `
+      <article class="cert reveal">
+        <button class="cert__img" type="button" data-lightbox="${esc(c.imagen)}" aria-label="${esc(title)}" data-hover>
+          <img src="${esc(c.imagen)}" alt="${esc(title)}" loading="lazy">
+        </button>
+        <div class="cert__body">
+          <span class="label">${esc(t(c.entidad))} · ${esc(c.anio)}</span>
+          <h3>${esc(title)}</h3>
+          <p>${esc(t(c.texto))}</p>
+          <div class="cert__actions">
+            ${c.pdf ? `<a class="btn" href="${esc(c.pdf)}" target="_blank" rel="noopener" data-hover>${esc(ui("viewCert"))}</a>` : ""}
+            ${withProject && c.proyecto ? `<a class="btn" href="proyecto.html?id=${encodeURIComponent(c.proyecto)}" data-hover>${esc(ui("viewProject"))}</a>` : ""}
+          </div>
+        </div>
+      </article>`;
   }
 
   /* ---------- Hero: slider de proyectos destacados ---------- */
@@ -230,7 +288,7 @@
 
     // Teclado
     window.addEventListener("keydown", (e) => {
-      if (scrollY > innerHeight) return;
+      if (scrollY > innerHeight || document.body.classList.contains("lb-open")) return;
       if (e.key === "ArrowRight") go(cur + 1);
       if (e.key === "ArrowLeft") go(cur - 1);
     });
@@ -261,34 +319,49 @@
     const title = t(p.titulo);
     document.title = `${title} — ${PERFIL.marca}`;
 
+    const g = `g-${p.id}`;
     const gal = (p.galeria && p.galeria.length
-      ? p.galeria.map((src) => `<img class="reveal" src="${esc(src)}" alt="${esc(title)}" loading="lazy">`)
+      ? p.galeria.map((src, k) => `<img class="reveal" src="${esc(src)}" alt="${esc(title)} · ${k + 2}" loading="lazy" data-lightbox="${esc(src)}" data-group="${g}" data-hover>`)
       : [0, 1, 2].map((k) => `<div class="ph reveal" style="background:linear-gradient(${135 + k * 60}deg,${p.color[0]},${p.color[1]})">${esc(ui("image"))} ${k + 1}</div>`)
     ).join("");
     const cita = t(p.cita);
+    const cert = p.certificado && CERTIFICADOS.find((c) => c.id === p.certificado);
+    const enlaces = (p.enlaces || []).slice();
+    if (p.enlace) enlaces.push({ texto: ui("live"), url: p.enlace });
 
     $("#project").innerHTML = `
       <section class="p-hero">
         <span class="label">${esc(t(p.categoria))} · ${esc(p.anio)}</span>
         <h1 data-split>${esc(title)}</h1>
+        ${p.reconocimiento ? `<a class="badge" href="#reconocimiento">✦ ${esc(t(p.reconocimiento))}</a>` : ""}
         <p class="p-hero__intro">${esc(t(p.resumen))}</p>
       </section>
-      <div class="p-cover reveal">${media(p)}</div>
+      <div class="p-cover reveal"${p.imagen ? ` data-lightbox="${esc(p.imagen)}" data-group="${g}" data-hover` : ""}>${media(p)}</div>
       <section class="p-info">
         <div class="p-meta">
           <div><span class="label">${esc(ui("client"))}</span><strong>${esc(t(p.cliente))}</strong></div>
           <div><span class="label">${esc(ui("role"))}</span><strong>${esc(t(p.rol))}</strong></div>
+          ${p.equipo ? `<div><span class="label">${esc(ui("team"))}</span><strong>${esc(t(p.equipo))}</strong></div>` : ""}
           <div><span class="label">${esc(ui("category"))}</span><strong>${esc(t(p.categoria))}</strong></div>
           <div><span class="label">${esc(ui("year"))}</span><strong>${esc(p.anio)}</strong></div>
         </div>
         <div class="p-desc reveal">
           <span class="label">${esc(ui("description"))}</span>
           <p style="margin-top:16px">${esc(t(p.descripcion))}</p>
-          ${p.enlace ? `<a class="btn" href="${esc(p.enlace)}" target="_blank" rel="noopener" data-hover>${esc(ui("live"))}</a>` : ""}
+          ${enlaces.length ? `
+            <span class="label p-links__label">${esc(ui("resources"))}</span>
+            <div class="p-links">${enlaces.map((l, k) => `<a class="btn${k === 0 ? " btn--solid" : ""}" href="${esc(l.url)}" target="_blank" rel="noopener" data-hover>${esc(t(l.texto))}</a>`).join("")}</div>` : ""}
         </div>
       </section>
+      ${p.datos && p.datos.length ? `
+        <section class="p-stats">
+          <span class="label">${esc(ui("keyData"))}</span>
+          <div class="p-stats__grid">${p.datos.map((d) => `<div class="reveal"><strong>${esc(d.valor)}</strong><span>${esc(t(d.texto))}</span></div>`).join("")}</div>
+        </section>` : ""}
       ${cita ? `<blockquote class="p-quote reveal">“${esc(cita)}”</blockquote>` : ""}
+      <div class="p-gallery__head"><span class="label">${esc(ui("gallery"))}</span></div>
       <section class="p-gallery">${gal}</section>
+      ${cert ? `<section class="certs certs--project" id="reconocimiento"><div><span class="label"><span class="star">✦</span> ${esc(ui("recognition"))}</span></div><div class="certs__list">${certHTML(cert, false)}</div></section>` : ""}
       <a class="p-next" href="proyecto.html?id=${encodeURIComponent(next.id)}" data-cursor="next">
         <span class="label">${esc(ui("nextProject"))}</span>
         <h2 data-split>${esc(t(next.titulo))}</h2>
@@ -316,7 +389,7 @@
   /* ---------- Vista previa al pasar sobre la lista ---------- */
   function initListPreview() {
     const prev = $("#listPreview");
-    const list = $("#list");
+    const list = $("#workSections");
     list.addEventListener("mouseover", (e) => {
       const it = e.target.closest(".list__item");
       if (!it) return;
@@ -325,6 +398,84 @@
     });
     list.addEventListener("mouseleave", () => prev.classList.remove("on"));
     window.addEventListener("mousemove", (e) => { prev.style.left = e.clientX + "px"; prev.style.top = e.clientY + "px"; });
+  }
+
+  /* ---------- Visor de imágenes (galerías y certificados) ---------- */
+  function initLightbox() {
+    const lb = document.createElement("div");
+    lb.className = "lb";
+    lb.setAttribute("role", "dialog");
+    lb.setAttribute("aria-modal", "true");
+    lb.innerHTML = `
+      <button class="lb__close" type="button" data-hover>×</button>
+      <button class="lb__nav lb__prev" type="button" data-hover>←</button>
+      <img alt="">
+      <button class="lb__nav lb__next" type="button" data-hover>→</button>
+      <span class="lb__count label"></span>`;
+    document.body.appendChild(lb);
+    let list = [], idx = 0;
+    const img = $("img", lb);
+    const show = () => {
+      img.src = list[idx];
+      $(".lb__count", lb).textContent = `${idx + 1} / ${list.length}`;
+      lb.classList.toggle("single", list.length < 2);
+      $(".lb__close", lb).setAttribute("aria-label", ui("close"));
+    };
+    const open = (src, group) => {
+      list = group ? [...new Set($$(`[data-lightbox][data-group="${group}"]`).map((x) => x.dataset.lightbox))] : [src];
+      idx = Math.max(0, list.indexOf(src));
+      show();
+      lb.classList.add("on");
+      document.body.classList.add("lb-open");
+      $(".lb__close", lb).focus();
+    };
+    const close = () => { lb.classList.remove("on"); document.body.classList.remove("lb-open"); };
+    const step = (d) => { idx = (idx + d + list.length) % list.length; show(); };
+
+    document.addEventListener("click", (e) => {
+      const trg = e.target.closest("[data-lightbox]");
+      if (trg && !lb.contains(trg)) { e.preventDefault(); open(trg.dataset.lightbox, trg.dataset.group); }
+    });
+    lb.addEventListener("click", (e) => {
+      if (e.target.closest(".lb__close") || e.target === lb) close();
+      else if (e.target.closest(".lb__prev")) step(-1);
+      else if (e.target.closest(".lb__next")) step(1);
+    });
+    window.addEventListener("keydown", (e) => {
+      if (!lb.classList.contains("on")) return;
+      if (e.key === "Escape") close();
+      if (e.key === "ArrowRight") step(1);
+      if (e.key === "ArrowLeft") step(-1);
+    });
+  }
+
+  /* ---------- Videos: vista previa al pasar el mouse, sonido al hacer clic ---------- */
+  function initVideos() {
+    const grid = $("#videoGrid");
+    if (!grid) return;
+    const canHover = matchMedia("(hover: hover)").matches;
+    grid.addEventListener("click", (e) => {
+      const btn = e.target.closest(".vcard__play");
+      if (!btn) return;
+      const card = btn.closest(".vcard");
+      const v = $("video", card);
+      $$(".vcard.is-playing video", grid).forEach((o) => { if (o !== v) { o.pause(); o.muted = true; o.controls = false; o.closest(".vcard").classList.remove("is-playing"); } });
+      card.classList.add("is-playing");
+      v.muted = false;
+      v.controls = true;
+      v.currentTime = 0;
+      v.play();
+    });
+    if (canHover) {
+      grid.addEventListener("mouseover", (e) => {
+        const card = e.target.closest(".vcard");
+        if (card && !card.classList.contains("is-playing")) $("video", card).play().catch(() => {});
+      });
+      grid.addEventListener("mouseout", (e) => {
+        const card = e.target.closest(".vcard");
+        if (card && !card.contains(e.relatedTarget) && !card.classList.contains("is-playing")) $("video", card).pause();
+      });
+    }
   }
 
   /* ---------- Cursor personalizado ---------- */
@@ -498,7 +649,9 @@
     heroCtl = initHero();
     initDrag($("#slider"));
     initListPreview();
+    initVideos();
   }
+  initLightbox();
   initEvents();
   initCursor();
   initLoader();

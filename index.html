@@ -64,13 +64,18 @@
       </div>
     </section>
 
-    <!-- ARCHIVO / LISTA DE PROYECTOS -->
-    <div class="sec-head">
-      <span class="label"><span class="star">✦</span> <span data-i18n="allProjects">Todos los proyectos</span></span>
-      <span class="label" id="countProjects">00</span>
-    </div>
-    <section class="list" id="list"></section>
+    <!-- PROYECTOS POR SECCIÓN (se generan desde SECCIONES en data.js) -->
+    <div id="workSections"></div>
     <div class="list__preview" id="listPreview"></div>
+
+    <!-- VIDEOS -->
+    <section class="videos" id="videos">
+      <div class="videos__head">
+        <span class="label"><span class="star">✦</span> <span data-i18n="videosLabel">Edición de video</span></span>
+        <h2 data-split data-i18n="videosTitle">Videos</h2>
+      </div>
+      <div class="videos__grid" id="videoGrid"></div>
+    </section>
 
     <!-- HERRAMIENTAS -->
     <section data-i18n-aria="tools" aria-label="Herramientas">
@@ -85,6 +90,15 @@
         <h2 style="margin-top:16px" data-split data-i18n="servicesTitle">Servicios y habilidades</h2>
       </div>
       <ul class="services__list" id="services"></ul>
+    </section>
+
+    <!-- RECONOCIMIENTOS / CERTIFICADOS -->
+    <section class="certs" id="reconocimientos">
+      <div>
+        <span class="label"><span class="star">✦</span> <span data-i18n="certsLabel">Reconocimientos</span></span>
+        <h2 style="margin-top:16px" data-split data-i18n="certsTitle">Certificados</h2>
+      </div>
+      <div class="certs__list" id="certList"></div>
     </section>
 
     <!-- SOBRE MÍ -->
