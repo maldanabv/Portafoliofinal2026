@@ -219,13 +219,17 @@
   function initHero() {
     const DURACION = 6; // segundos por proyecto
     const dest = PROYECTOS.filter((p) => p.destacado);
-    const items = (dest.length ? dest : PROYECTOS).slice(0, 4);
+    // Primera diapositiva: video en movimiento (HERO_VIDEO en data.js)
+    const extra = typeof HERO_VIDEO !== "undefined" && HERO_VIDEO ? [HERO_VIDEO] : [];
+    const items = [...extra, ...(dest.length ? dest : PROYECTOS)].slice(0, 4);
     const hero = $("#inicio");
     hero.style.setProperty("--n", items.length);
     hero.style.setProperty("--dur", DURACION + "s");
 
     $("#fhMedia").innerHTML = items.map((p) => {
-      const m = p.imagenHero ? `<img class="cut" src="${esc(p.imagenHero)}" alt="${esc(t(p.titulo))}">` : media(p);
+      const m = p.videoHero
+        ? `<video src="${esc(p.videoHero)}" muted loop playsinline preload="auto"${p.poster ? ` poster="${esc(p.poster)}"` : ""}></video>`
+        : p.imagenHero ? `<img class="cut" src="${esc(p.imagenHero)}" alt="${esc(t(p.titulo))}">` : media(p);
       return `<div class="fh__img">${m}</div>`;
     }).join("");
     $("#fhTabs").innerHTML = items.map((p, i) => `
@@ -255,7 +259,11 @@
       const first = cur === -1;
       cur = i;
       const p = items[i];
-      imgs.forEach((el, k) => el.classList.toggle("active", k === i));
+      imgs.forEach((el, k) => {
+        el.classList.toggle("active", k === i);
+        const v = $("video", el);
+        if (v) { if (k === i) { v.currentTime = 0; v.play().catch(() => {}); } else v.pause(); }
+      });
       tabs.forEach((el, k) => {
         el.classList.remove("active");
         const bar = $("i", el);
@@ -265,7 +273,7 @@
       swapLetters($("#fhTitle"), t(p.titulo), first);
       swap($("#fhYear"), p.anio, first);
       swap($("#fhCat"), t(p.categoria), first);
-      $("#fhLink").href = `proyecto.html?id=${encodeURIComponent(p.id)}`;
+      $("#fhLink").href = p.link || `proyecto.html?id=${encodeURIComponent(p.id)}`;
     }
 
     tabs.forEach((tab) => {

@@ -252,6 +252,19 @@ const PROYECTOS = [
   },
 ];
 
+/* ---------- VIDEO DE LA PRIMERA PANTALLA ----------
+   Aparece como primera diapositiva del inicio, en movimiento.
+   Pon HERO_VIDEO = null; si no quieres video. */
+const HERO_VIDEO = {
+  id: "reel",
+  titulo: { es: "Reel 2026", en: "Reel 2026" },
+  categoria: { es: "Edición de video", en: "Video editing" },
+  anio: "2026",
+  videoHero: "videos/video-01.mp4",
+  link: "#videos",
+  color: ["#731641", "#141804"],
+};
+
 /* ---------- VIDEOS ----------
    src:     archivo en la carpeta /videos
    formato: "vertical" (9:16) u "horizontal" (16:9)

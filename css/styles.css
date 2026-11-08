@@ -234,16 +234,22 @@ body.menu-open .menu__links li:nth-child(5) a { transition-delay: 0.2s; }
   position: relative; height: 100vh; height: 100svh; min-height: 640px;
   overflow: hidden; user-select: none; touch-action: pan-y;
 }
+/* Imagen / video del hero: detrás del título y más tenue */
 .fh__media {
-  position: absolute; z-index: 2; pointer-events: none;
+  position: absolute; z-index: 0; pointer-events: none;
   left: 41%; width: min(29vw, 560px); top: 18.5%; bottom: 18.5%;
+  overflow: hidden; border-radius: 2px;
 }
 .fh__img {
   position: absolute; inset: 0; opacity: 0; transform: scale(1.06) translateX(3%); filter: blur(8px);
   transition: opacity 0.9s var(--ease), transform 1.4s var(--ease), filter 0.9s var(--ease);
 }
-.fh__img.active { opacity: 1; transform: none; filter: none; }
-.fh__img img { width: 100%; height: 100%; object-fit: cover; }
+.fh__img.active { opacity: var(--hero-opacity, 0.55); transform: none; filter: saturate(0.85); }
+[data-theme="dark"] .fh__img.active { opacity: 0.5; }
+.fh__img img, .fh__img video { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* Movimiento lento de la imagen activa (efecto Ken Burns) */
+.fh__img.active img:not(.cut) { animation: heroDrift var(--dur, 6s) linear forwards; }
+@keyframes heroDrift { from { transform: scale(1.14) translateX(-2%); } to { transform: scale(1.02) translateX(2%); } }
 .fh__img img.cut { object-fit: contain; }
 .fh__img .ph {
   width: 100%; height: 100%; border-radius: 2px; font-size: 0;
@@ -257,7 +263,7 @@ body.menu-open .menu__links li:nth-child(5) a { transition-delay: 0.2s; }
 body:not(.ready) .fh .sw { transform: translateY(105%); }
 body.ready .fh .sw { transition-delay: 0s; }
 .fh__title {
-  position: absolute; z-index: 1; left: var(--gutter); top: 48%; transform: translateY(-50%);
+  position: absolute; z-index: 2; left: var(--gutter); top: 48%; transform: translateY(-50%);
   font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; line-height: 1;
   font-size: clamp(54px, 7.7vw, 160px); white-space: nowrap;
 }
