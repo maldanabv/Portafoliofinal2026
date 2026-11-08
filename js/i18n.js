@@ -68,6 +68,7 @@ const UI = {
     resources: "✦ Enlaces del proyecto",
     keyData: "✦ En cifras",
     gallery: "✦ Galería",
+    aboutMore: "Conóceme más",
   },
   en: {
     langBtn: "ESP",
@@ -134,5 +135,6 @@ const UI = {
     resources: "✦ Project links",
     keyData: "✦ In numbers",
     gallery: "✦ Gallery",
+    aboutMore: "More about me",
   },
 };

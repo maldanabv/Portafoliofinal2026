@@ -28,6 +28,11 @@ const PERFIL = {
     en: ["Between art", "and engineering:", "aesthetic sensitivity", "with strategy"],
   },
   saludo: { es: "Hola, soy María José.", en: "Hi, I'm María José." },
+  // Texto corto que aparece debajo de los proyectos destacados
+  intro: {
+    es: "Soy una creadora digital entre el arte y la ingeniería. Uno edición de video, 3D, programación y estrategia para crear proyectos con sensibilidad estética y propósito.",
+    en: "I'm a digital creator between art and engineering. I bring together video editing, 3D, programming and strategy to build projects with aesthetic sensitivity and purpose.",
+  },
   bio: {
     es: [
       "Soy María José Aldana Bravo, estudiante de Creación Digital. Hago edición de video, 3D, programación, marketing y briefs creativos.",

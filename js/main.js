@@ -124,6 +124,7 @@
   function renderHome() {
     document.title = `${PERFIL.marca} — ${PERFIL.nombre} ${PERFIL.apellido}`;
     setSplitText($("#aboutTitle"), t(PERFIL.saludo));
+    $("#introText").textContent = t(PERFIL.intro);
 
     $("#slider").innerHTML = PROYECTOS.map((p) => `
       <a class="card" href="proyecto.html?id=${encodeURIComponent(p.id)}" data-cursor="view">
