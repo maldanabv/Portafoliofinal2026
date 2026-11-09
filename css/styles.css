@@ -3,7 +3,7 @@
    Cambia los colores y fuentes en :root
    ========================================================= */
 /* ---------- Paleta MJ Digital Studio ----------
-   Rosa     #BF6079
+   (El rosado se reemplazó por vino tinto en toda la página)
    Vino     #731641
    Oliva    #585936
    Musgo    #282A0B
@@ -11,12 +11,13 @@
    Crema    #F4EDE8  (fondo claro que equilibra la paleta)
 */
 :root {
-  --rosa: #bf6079;
+  --rosa: var(--vino); /* antes rosado: ahora vino tinto */
   --vino: #731641;
   --oliva: #585936;
   --musgo: #282a0b;
   --noche: #141804;
   --crema: #f4ede8;
+  --vino-claro: #a8336a; /* vino tinto más claro, solo para leer sobre fondo oscuro */
 
   --bg: var(--crema);
   --bg-2: #eadfd8;
@@ -41,6 +42,8 @@
 }
 
 [data-theme="dark"] {
+  --rosa: var(--vino-claro);
+  --chip-fg: var(--crema);
   --bg: var(--noche);
   --bg-2: var(--musgo);
   --fg: var(--crema);
@@ -52,9 +55,8 @@
   --nav-solid: var(--musgo);
   --glass: rgba(20, 24, 4, 0.82);
   --accent: var(--rosa);
-  --chip: var(--rosa);
-  --chip-fg: var(--noche);
-  --logo-j: var(--rosa);
+  --chip: var(--vino);
+  --logo-j: var(--vino-claro);
   --footer-bg: var(--musgo);
   --footer-fg: var(--crema);
 }
@@ -148,16 +150,16 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .header.scrolled { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding-top: 16px; padding-bottom: 16px; }
 .header.hide { transform: translateY(-110%); }
 body.menu-open .header { transform: none; background: transparent; backdrop-filter: none; }
-/* Logo MJ Digital Studio: la M en el color del texto y la J en vino, cruzada sobre la M */
+/* Logo MJ Digital Studio: la M en el color del texto y la J en vino, una al lado de la otra */
 .logo {
   display: inline-flex; align-items: center; justify-self: start;
   font-family: var(--font-display); font-size: 21px; line-height: 1; color: var(--fg);
 }
 .logo img { height: 2.4em; width: auto; }
-.logo__mark { display: inline-flex; align-items: flex-start; font-size: 2.05em; font-weight: 700; letter-spacing: 0; margin-right: 0.12em; }
+.logo__mark { display: inline-flex; align-items: baseline; gap: 0.03em; font-size: 1.7em; font-weight: 700; letter-spacing: 0; margin-right: 0.45em; }
 .logo__m { position: relative; z-index: 1; }
-.logo__j { color: var(--logo-j); margin-left: -0.2em; transform: translateY(0.13em); position: relative; z-index: 2; }
-.logo__txt { font-weight: 400; letter-spacing: 0; white-space: nowrap; padding-top: 0.18em; }
+.logo__j { color: var(--logo-j); }
+.logo__txt { font-weight: 400; letter-spacing: 0.01em; white-space: nowrap; padding-left: 0.45em; border-left: 1px solid var(--line); line-height: 1.3; }
 .header__nav {
   display: flex; align-items: center; padding: 12px 13px; background: var(--nav-bg);
   border-radius: 3px; font-size: 20px; font-weight: 500; letter-spacing: 0;
@@ -467,10 +469,10 @@ body.ready .fh .sw { transition-delay: 0s; }
   overflow-wrap: anywhere;
   transition: color 0.4s;
 }
-.footer__cta:hover { color: var(--rosa); }
+.footer__cta:hover { color: var(--crema); }
 .footer__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 32px; border-top: 1px solid rgba(128,128,128,0.35); }
 .footer__grid div { display: grid; gap: 6px; align-content: start; font-size: 15px; }
-.footer__grid a:hover { color: var(--accent); }
+.footer__grid a:hover { color: var(--crema); text-decoration: underline; text-underline-offset: 3px; }
 .footer__bottom { display: flex; justify-content: space-between; margin-top: 80px; font-size: 13px; opacity: 0.6; gap: 16px; flex-wrap: wrap; }
 
 /* ---------- Página de proyecto ---------- */
@@ -999,7 +1001,7 @@ body.lb-open { overflow: hidden; }
 .footer__cta.split .ch__in { padding-bottom: 0.3em; margin-bottom: -0.3em; }
 .footer__cta.split .ch__in::after {
   content: attr(data-ch); position: absolute; left: 0; top: 100%;
-  color: var(--rosa);
+  color: var(--crema); opacity: 0.55; font-style: italic;
 }
 .footer__cta.split:hover .ch__in { translate: 0 -100%; }
 .footer__cta.split:hover { color: inherit; }
