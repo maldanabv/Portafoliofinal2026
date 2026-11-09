@@ -24,23 +24,23 @@ const PERFIL = {
   logoImg: "", // vacío = usa el logo MJ hecho en código (se adapta al modo oscuro)
   cv: "", // ej: "docs/cv-maria-jose-aldana.pdf"
   declaracion: {
-    es: ["Entre el arte", "y el diseño:", "sensibilidad estética", "con estrategia"],
-    en: ["Between art", "and design:", "aesthetic sensitivity", "with strategy"],
+    es: ["Entre lo digital", "y lo estético", "se puede crear", "algo sorprendente"],
+    en: ["Between the digital", "and the aesthetic", "something surprising", "can be created"],
   },
   saludo: { es: "Hola, soy María José.", en: "Hi, I'm María José." },
   // Texto corto que aparece debajo de los proyectos destacados
   intro: {
-    es: "Soy una creadora digital entre el arte y el diseño. Uno edición de video, 3D, programación y estrategia para crear proyectos con sensibilidad estética y propósito.",
-    en: "I'm a digital creator between art and design. I bring together video editing, 3D, programming and strategy to build projects with aesthetic sensitivity and purpose.",
+    es: "Soy una creadora digital entre el arte y el diseño. Uno edición de video, 3D, programación y estrategia porque creo que entre lo digital y lo estético se puede crear algo sorprendente.",
+    en: "I'm a digital creator between art and design. I bring together video editing, 3D, programming and strategy because I believe that between the digital and the aesthetic, something surprising can be created.",
   },
   bio: {
     es: [
       "Soy María José Aldana Bravo, estudiante de Creación Digital. Hago edición de video, 3D, programación, marketing y briefs creativos.",
-      "Vengo de una formación entre el arte y el diseño, y por eso pienso cada proyecto con sensibilidad estética y con estrategia.",
+      "Vengo de una formación entre el arte y el diseño, y creo que entre lo digital y lo estético se puede crear algo sorprendente.",
     ],
     en: [
       "I'm María José Aldana Bravo, a Digital Creation student. I work in video editing, 3D, programming, marketing and creative briefs.",
-      "My background bridges art and design, so I approach every project with both aesthetic sensitivity and strategy.",
+      "My background bridges art and design, and I believe that between the digital and the aesthetic, something surprising can be created.",
     ],
   },
   foto: "img/maria-jose.jpg",
