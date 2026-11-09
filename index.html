@@ -126,12 +126,21 @@
     </section>
 
     <!-- SERVICIOS -->
+    <!-- Lista que gira como un cilindro: la sección se queda fija y las palabras suben -->
     <section class="services" id="servicios">
-      <div>
-        <span class="label"><span class="star">✦</span> <span data-i18n="whatIDo">Qué hago</span></span>
-        <h2 style="margin-top:16px" data-split data-i18n="servicesTitle">Servicios y habilidades</h2>
+      <div class="services__pin">
+        <div class="services__side">
+          <span class="label"><span class="star">✦</span> <span data-i18n="whatIDo">Qué hago</span></span>
+          <h2 data-split data-i18n="servicesTitle">Servicios y habilidades</h2>
+          <div class="services__now" aria-live="polite">
+            <span class="services__num" id="svNum">01</span>
+            <p id="svText"></p>
+          </div>
+        </div>
+        <div class="services__wheel">
+          <ul class="services__list" id="services"></ul>
+        </div>
       </div>
-      <ul class="services__list" id="services"></ul>
     </section>
 
     <!-- RECONOCIMIENTOS / CERTIFICADOS -->

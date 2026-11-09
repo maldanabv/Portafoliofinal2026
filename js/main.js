@@ -223,6 +223,59 @@
     track.addEventListener("dragstart", (e) => e.preventDefault());
   }
 
+  /* ---------- Servicios: lista tipo cilindro ----------
+     La sección se queda fija; al hacer scroll las palabras suben
+     y la que pasa por el centro se resalta. A la izquierda aparece su descripción. */
+  function initServicesWheel() {
+    const sec = $("#servicios"), list = $("#services");
+    if (!sec || !list) return;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let items = [], pos = 0, target = 0, running = false, active = -1;
+
+    const fromScroll = () => {
+      const r = sec.getBoundingClientRect();
+      const len = r.height - innerHeight;
+      const p = len > 0 ? Math.min(1, Math.max(0, -r.top / len)) : 0;
+      return p * Math.max(0, items.length - 1);
+    };
+    const layout = () => {
+      if (!items.length) return;
+      const i = Math.min(items.length - 1, Math.floor(pos)), f = pos - i;
+      const a = items[i], b = items[Math.min(items.length - 1, i + 1)];
+      // centro (en px) del elemento actual, interpolado hacia el siguiente
+      const center = a.offsetTop + a.offsetHeight / 2 + ((b.offsetTop + b.offsetHeight / 2) - (a.offsetTop + a.offsetHeight / 2)) * f;
+      list.style.transform = `translate3d(0, ${(list.parentElement.clientHeight / 2 - center).toFixed(1)}px, 0)`;
+      const now = Math.round(pos);
+      if (now !== active) {
+        if (items[active]) items[active].classList.remove("is-active");
+        active = now;
+        items[active].classList.add("is-active");
+        $("#svNum").textContent = `${pad(active + 1)} / ${pad(items.length)}`;
+        $("#svText").textContent = items[active].dataset.text;
+      }
+    };
+    const loop = () => {
+      const d = target - pos;
+      pos = reduce || Math.abs(d) < 0.001 ? target : pos + d * 0.12;
+      layout();
+      if (pos !== target) requestAnimationFrame(loop); else running = false;
+    };
+    const update = () => {
+      target = fromScroll();
+      if (!running) { running = true; requestAnimationFrame(loop); }
+    };
+    sec._refresh = () => {
+      items = $$("li", list);
+      sec.style.setProperty("--n", items.length);
+      active = -1;
+      pos = target = fromScroll();
+      layout();
+    };
+    sec._refresh();
+    addEventListener("scroll", update, { passive: true });
+    addEventListener("resize", () => sec._refresh());
+  }
+
   /* ---------- Marquesina grande arrastrable ---------- */
   function initDragMarquee() {
     const wrap = $("#dmarquee"), track = $("#dmarqueeTrack");
@@ -317,8 +370,11 @@
     const tools = HERRAMIENTAS.map((h) => `<span>${esc(t(h))}</span>`).join("");
     $$(".marquee__inner").forEach((m) => (m.innerHTML = tools + tools));
 
-    $("#services").innerHTML = SERVICIOS.map((s, i) => `
-      <li class="reveal"><span class="label">${pad(i + 1)}</span><h3>${esc(t(s.titulo))}</h3><p>${esc(t(s.texto))}</p></li>`).join("");
+    // Lista tipo cilindro: primero los servicios, después las herramientas
+    $("#services").innerHTML =
+      SERVICIOS.map((s, i) => `<li data-text="${esc(t(s.texto))}">${esc(t(s.titulo))}</li>`).join("") +
+      HERRAMIENTAS.map((h) => `<li data-text="${esc(ui("toolText"))}">${esc(t(h))}</li>`).join("");
+    if ($("#servicios")._refresh) $("#servicios")._refresh();
 
     const photo = $("#aboutPhoto");
     if (!photo.firstElementChild) {
@@ -936,6 +992,7 @@
     heroCtl = initHero();
 
     initShowcase();
+    initServicesWheel();
     initDragMarquee();
     initListPreview();
     initVideos();
