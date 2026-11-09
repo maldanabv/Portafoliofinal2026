@@ -59,7 +59,7 @@
       <div class="header__right">
         <button class="theme-btn" id="themeBtn" aria-label="${esc(ui("themeTitle"))}" title="${esc(ui("themeTitle"))}" data-hover></button>
         <button class="lang-btn" id="langBtn" aria-label="${esc(ui("langTitle"))}" title="${esc(ui("langTitle"))}" data-hover>${esc(ui("langBtn"))}</button>
-        <a class="pill-btn" href="#contacto" data-hover>${esc(ui("contactBtn"))}</a>
+        <a class="pill-btn" href="#contacto" data-contact data-hover>${esc(ui("contactBtn"))}</a>
         <button class="menu-btn" id="menuBtn" data-hover><span>${esc(ui("menu"))}</span><i></i></button>
       </div>`;
   }
@@ -87,7 +87,7 @@
   function renderFooter() {
     $("#contacto").innerHTML = `
       <span class="label">${esc(ui("haveProject"))}</span>
-      <a class="footer__cta" href="mailto:${esc(PERFIL.email)}" data-cursor="write" data-split>${esc(ui("letsTalk"))}</a>
+      <a class="footer__cta" href="mailto:${esc(PERFIL.email)}" data-contact data-cursor="write" data-split>${esc(ui("letsTalk"))}</a>
       <div class="footer__grid">
         <div><span class="label">${esc(ui("email"))}</span><a href="mailto:${esc(PERFIL.email)}">${esc(PERFIL.email)}</a>${PERFIL.telefono ? `<span>${esc(PERFIL.telefono)}</span>` : ""}</div>
         <div><span class="label">${esc(ui("location"))}</span><span>${esc(t(PERFIL.ciudad))}</span><span id="clock">--:--</span></div>
@@ -118,6 +118,7 @@
       else el.textContent = txt;
     });
     $$("[data-i18n-aria]").forEach((el) => el.setAttribute("aria-label", ui(el.dataset.i18nAria)));
+    $$("[data-i18n-ph]").forEach((el) => el.setAttribute("placeholder", ui(el.dataset.i18nPh)));
   }
 
   /* ---------- Proyectos destacados: panel de información ---------- */
@@ -533,6 +534,140 @@
     });
   }
 
+  /* ---------- Formulario de contacto ("Hablemos") ----------
+     Se abre con cualquier elemento que tenga data-contact.
+     Envía el mensaje a PERFIL.email con FormSubmit (formsubmit.co).
+     Si el envío falla, abre el correo del visitante con todo ya escrito. */
+  function initContact() {
+    const chips = (name, keys) =>
+      keys.map((k) => `<label class="chip-opt"><input type="${name === "servicio" ? "checkbox" : "radio"}" name="${name}" value="${k}"><span data-i18n="${k}">${esc(ui(k))}</span></label>`).join("");
+    const box = document.createElement("div");
+    box.className = "cf";
+    box.id = "contactForm";
+    box.setAttribute("role", "dialog");
+    box.setAttribute("aria-modal", "true");
+    box.setAttribute("aria-labelledby", "cfTitle");
+    box.innerHTML = `
+      <div class="cf__panel">
+        <button class="cf__close" type="button" data-i18n-aria="close" aria-label="${esc(ui("close"))}" data-hover>×</button>
+        <div class="cf__view cf__view--form">
+          <span class="label"><span class="star">✦</span> <span data-i18n="cfKicker">${esc(ui("cfKicker"))}</span></span>
+          <h2 class="cf__title" id="cfTitle" data-i18n="letsTalk">${esc(ui("letsTalk"))}</h2>
+          <p class="cf__lead" data-i18n="cfLead">${esc(ui("cfLead"))}</p>
+          <form novalidate>
+            <div class="cf__grid">
+              <label class="cf__field"><span data-i18n="cfName">${esc(ui("cfName"))}</span>
+                <input name="nombre" type="text" autocomplete="name" required data-i18n-ph="cfNamePh" placeholder="${esc(ui("cfNamePh"))}"></label>
+              <label class="cf__field"><span data-i18n="cfEmail">${esc(ui("cfEmail"))}</span>
+                <input name="email" type="email" autocomplete="email" required data-i18n-ph="cfEmailPh" placeholder="${esc(ui("cfEmailPh"))}"></label>
+            </div>
+            <fieldset class="cf__set"><legend data-i18n="cfService">${esc(ui("cfService"))}</legend>
+              <div class="chip-row">${chips("servicio", ["sv_video", "sv_3d", "sv_web", "sv_marketing", "sv_brief", "sv_brand", "sv_ux"])}</div></fieldset>
+            <fieldset class="cf__set"><legend data-i18n="cfTime">${esc(ui("cfTime"))}</legend>
+              <div class="chip-row">${chips("plazo", ["tm_urgent", "tm_month", "tm_quarter", "tm_open"])}</div></fieldset>
+            <label class="cf__field"><span data-i18n="cfMsg">${esc(ui("cfMsg"))}</span>
+              <textarea name="mensaje" rows="4" required data-i18n-ph="cfMsgPh" placeholder="${esc(ui("cfMsgPh"))}"></textarea></label>
+            <input class="cf__honey" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <p class="cf__error" role="alert"></p>
+            <div class="cf__foot">
+              <button class="cf__send" type="submit" data-hover><span data-i18n="cfSend">${esc(ui("cfSend"))}</span> <span aria-hidden="true">→</span></button>
+              <span class="cf__alt"><span data-i18n="cfOr">${esc(ui("cfOr"))}</span> <a href="mailto:${esc(PERFIL.email)}">${esc(PERFIL.email)}</a></span>
+            </div>
+          </form>
+        </div>
+        <div class="cf__view cf__view--done" aria-live="polite">
+          <span class="cf__check" aria-hidden="true">✦</span>
+          <h2 class="cf__title" data-i18n="cfThanks">${esc(ui("cfThanks"))}</h2>
+          <p class="cf__lead" data-i18n="cfThanksTxt">${esc(ui("cfThanksTxt"))}</p>
+          <button class="btn cf__again" type="button" data-hover data-i18n="cfAgain">${esc(ui("cfAgain"))}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(box);
+    const form = $("form", box);
+    const err = $(".cf__error", box);
+    const send = $(".cf__send", box);
+    let lastFocus = null;
+
+    const open = () => {
+      lastFocus = document.activeElement;
+      box.classList.add("on");
+      document.body.classList.add("lb-open");
+      setTimeout(() => (box.classList.contains("done") ? $(".cf__again", box) : form.nombre).focus({ preventScroll: true }), 350);
+    };
+    const close = () => {
+      box.classList.remove("on");
+      document.body.classList.remove("lb-open");
+      if (lastFocus) lastFocus.focus({ preventScroll: true });
+    };
+    const reset = () => { form.reset(); err.textContent = ""; box.classList.remove("done"); form.nombre.focus(); };
+
+    document.addEventListener("click", (e) => {
+      const trg = e.target.closest("[data-contact]");
+      if (trg && !box.contains(trg)) { e.preventDefault(); open(); }
+    });
+    box.addEventListener("click", (e) => {
+      if (e.target === box || e.target.closest(".cf__close")) close();
+      if (e.target.closest(".cf__again")) reset();
+    });
+    window.addEventListener("keydown", (e) => { if (e.key === "Escape" && box.classList.contains("on")) close(); });
+
+    // Datos del formulario en texto (para el correo de respaldo)
+    const collect = () => {
+      const pick = (n) => $$(`input[name="${n}"]:checked`, form).map((i) => ui(i.value)).join(", ");
+      return {
+        nombre: form.nombre.value.trim(),
+        email: form.email.value.trim(),
+        servicio: pick("servicio") || "—",
+        plazo: pick("plazo") || "—",
+        mensaje: form.mensaje.value.trim(),
+      };
+    };
+    const mailtoFallback = (d) => {
+      const body = `${ui("cfName")}: ${d.nombre}\n${ui("cfEmail")}: ${d.email}\n${ui("cfService")}: ${d.servicio}\n${ui("cfTime")}: ${d.plazo}\n\n${d.mensaje}`;
+      location.href = `mailto:${PERFIL.email}?subject=${encodeURIComponent(`${ui("cfSubject")} · ${d.nombre}`)}&body=${encodeURIComponent(body)}`;
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      err.textContent = "";
+      if (form._honey.value) return; // bots
+      const d = collect();
+      const bad = !d.nombre ? form.nombre : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email) ? form.email : d.mensaje.length < 10 ? form.mensaje : null;
+      $$(".cf__field", form).forEach((f) => f.classList.remove("invalid"));
+      if (bad) {
+        bad.closest(".cf__field").classList.add("invalid");
+        err.textContent = ui(bad === form.nombre ? "cfErrName" : bad === form.email ? "cfErrEmail" : "cfErrMsg");
+        bad.focus();
+        return;
+      }
+      send.disabled = true;
+      send.classList.add("is-sending");
+      try {
+        const res = await fetch(`https://formsubmit.co/ajax/${PERFIL.email}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            _subject: `${ui("cfSubject")} · ${d.nombre}`,
+            _replyto: d.email,
+            _template: "table",
+            _captcha: "false",
+            Nombre: d.nombre, Correo: d.email, Servicio: d.servicio, Plazo: d.plazo, Mensaje: d.mensaje,
+          }),
+        });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok || String(out.success) !== "true") throw new Error(out.message || res.status);
+        box.classList.add("done");
+        $(".cf__again", box).focus({ preventScroll: true });
+      } catch (ex) {
+        err.textContent = ui("cfErrSend");
+        mailtoFallback(d);
+      } finally {
+        send.disabled = false;
+        send.classList.remove("is-sending");
+      }
+    });
+  }
+
   /* ---------- Videos: vista previa al pasar el mouse, sonido al hacer clic ---------- */
   function initVideos() {
     const grid = $("#videoGrid");
@@ -738,6 +873,7 @@
     initVideos();
   }
   initLightbox();
+  initContact();
   initEvents();
   initCursor();
   initLoader();
