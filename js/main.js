@@ -717,21 +717,16 @@
     });
   }
 
-  /* ---------- Letras que entran y salen ----------
-     Divide un texto en letras, cada una dentro de su propia máscara.
-     Las letras alternan dirección (arriba / abajo) y entran escalonadas. */
+  /* ---------- Palabras que suben y salen ----------
+     Divide un texto en palabras, cada una dentro de su propia máscara.
+     Entran subiendo desde abajo, una tras otra, y salen hacia arriba. */
   function splitLetters(el, text) {
     text = text != null ? text : el.textContent;
     el.setAttribute("aria-label", text);
-    let i = 0;
-    el.innerHTML = text.split(" ").map((word) => {
-      const letters = [...word].map((ch) => {
-        const d = i % 2 === 0 ? 1 : -1;
-        return `<span class="ch" aria-hidden="true"><span class="ch__in" style="--i:${i++};--d:${d}" data-ch="${esc(ch)}">${esc(ch)}</span></span>`;
-      }).join("");
-      i++;
-      return `<span class="word">${letters}</span>`;
-    }).join(" ");
+    el.innerHTML = text.split(/\s+/).filter(Boolean).map((word, i) =>
+      `<span class="ch" aria-hidden="true"><span class="ch__in" style="--i:${i}" data-ch="${esc(word)}">${esc(word)}</span></span>`
+    ).join(" ");
+    el.classList.remove("out");
     el.classList.add("split");
   }
 
@@ -746,6 +741,7 @@
     if (el.getAttribute("aria-label") === text) return;
     if (!el.classList.contains("in")) { splitLetters(el, text); return; }
     el.classList.remove("in");
+    el.classList.add("out");
     clearTimeout(el._t);
     el._t = setTimeout(() => {
       splitLetters(el, text);
@@ -775,7 +771,13 @@
   }
   whenReady(() => {
     splitIO = new IntersectionObserver((entries) => {
-      entries.forEach((en) => en.target.classList.toggle("in", en.isIntersecting));
+      // Al entrar suben a su lugar; al salir por arriba se van hacia arriba, por abajo vuelven abajo
+      entries.forEach((en) => {
+        const el = en.target;
+        if (el._t && el.classList.contains("out")) return; // está cambiando de texto
+        el.classList.toggle("in", en.isIntersecting);
+        el.classList.toggle("out", !en.isIntersecting && en.boundingClientRect.top < 0);
+      });
     }, { rootMargin: "-12% 0px -12% 0px" });
     pendingSplit.forEach((el) => splitIO.observe(el));
     pendingSplit.clear();

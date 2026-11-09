@@ -944,27 +944,27 @@ body.lb-open { overflow: hidden; }
 }
 
 /* =========================================================
-   LETRAS QUE ENTRAN Y SALEN
-   Cada letra está dentro de una máscara (.ch) y se desliza
-   desde arriba o desde abajo (--d = 1 / -1), escalonada (--i).
+   PALABRAS QUE SUBEN Y SALEN
+   Cada palabra está dentro de una máscara (.ch): entra subiendo
+   desde abajo, escalonada (--i), y al salir sigue hacia arriba.
    ========================================================= */
-.split { --stagger: 32ms; --dur: 0.95s; }
-.split .word { display: inline-block; white-space: nowrap; }
+.split { --stagger: 85ms; --dur: 1s; --split-ease: cubic-bezier(0.65, 0, 0.15, 1); }
 .split .ch {
-  display: inline-block; overflow: hidden; vertical-align: top;
-  padding: 0.06em 0 0.14em; margin: -0.06em 0 -0.14em;
+  display: inline-block; overflow: hidden; vertical-align: top; white-space: nowrap;
+  padding: 0.06em 0.04em 0.16em; margin: -0.06em -0.04em -0.16em;
 }
 .split .ch__in {
   display: inline-block; position: relative;
-  transform: translateY(calc(var(--d) * 115%));
+  transform: translateY(115%);
   transition:
-    transform var(--dur) var(--ease) calc(var(--i) * var(--stagger)),
+    transform var(--dur) var(--split-ease) calc(min(var(--i), 10) * var(--stagger)),
     translate 0.6s var(--ease) calc(var(--i) * 22ms);
 }
 .split.in .ch__in { transform: none; }
+.split.out .ch__in { transform: translateY(-115%); transition-duration: calc(var(--dur) * 0.6), 0.6s; }
 
 /* Título del hero: más rápido para el cambio de proyecto */
-#fhTitle.split { --stagger: 26ms; --dur: 0.75s; }
+#fhTitle.split { --stagger: 70ms; --dur: 0.85s; }
 #fhLink.sw-wrap { overflow: visible; }
 
 /* "Hablemos": al pasar el mouse cada letra rueda y aparece su copia */
