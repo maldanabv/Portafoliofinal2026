@@ -24,23 +24,23 @@ const PERFIL = {
   logoImg: "", // vacío = usa el logo MJ hecho en código (se adapta al modo oscuro)
   cv: "", // ej: "docs/cv-maria-jose-aldana.pdf"
   declaracion: {
-    es: ["Entre el arte", "y la ingeniería:", "sensibilidad estética", "con estrategia"],
-    en: ["Between art", "and engineering:", "aesthetic sensitivity", "with strategy"],
+    es: ["Entre el arte", "y el diseño:", "sensibilidad estética", "con estrategia"],
+    en: ["Between art", "and design:", "aesthetic sensitivity", "with strategy"],
   },
   saludo: { es: "Hola, soy María José.", en: "Hi, I'm María José." },
   // Texto corto que aparece debajo de los proyectos destacados
   intro: {
-    es: "Soy una creadora digital entre el arte y la ingeniería. Uno edición de video, 3D, programación y estrategia para crear proyectos con sensibilidad estética y propósito.",
-    en: "I'm a digital creator between art and engineering. I bring together video editing, 3D, programming and strategy to build projects with aesthetic sensitivity and purpose.",
+    es: "Soy una creadora digital entre el arte y el diseño. Uno edición de video, 3D, programación y estrategia para crear proyectos con sensibilidad estética y propósito.",
+    en: "I'm a digital creator between art and design. I bring together video editing, 3D, programming and strategy to build projects with aesthetic sensitivity and purpose.",
   },
   bio: {
     es: [
       "Soy María José Aldana Bravo, estudiante de Creación Digital. Hago edición de video, 3D, programación, marketing y briefs creativos.",
-      "Vengo de una formación entre el arte y la ingeniería, y por eso pienso cada proyecto con sensibilidad estética y con estrategia.",
+      "Vengo de una formación entre el arte y el diseño, y por eso pienso cada proyecto con sensibilidad estética y con estrategia.",
     ],
     en: [
       "I'm María José Aldana Bravo, a Digital Creation student. I work in video editing, 3D, programming, marketing and creative briefs.",
-      "My background bridges art and engineering, so I approach every project with both aesthetic sensitivity and strategy.",
+      "My background bridges art and design, so I approach every project with both aesthetic sensitivity and strategy.",
     ],
   },
   foto: "img/maria-jose.jpg",
@@ -367,7 +367,7 @@ const TRAYECTORIA = [
   },
   {
     periodo: { es: "Año", en: "Year" },
-    titulo: { es: "Formación en arte e ingeniería", en: "Training in art and engineering" },
+    titulo: { es: "Formación en arte y diseño", en: "Training in art and design" },
     lugar: { es: "Institución", en: "Institution" },
   },
   {
