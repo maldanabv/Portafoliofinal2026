@@ -138,27 +138,89 @@
     $$(".sc-card").forEach((c) => c.classList.toggle("is-active", +c.dataset.i === i));
   }
 
+  /* Scroll de proyectos destacados:
+     la sección se queda fija mientras bajas y el scroll mueve la tira.
+     La imagen activa es un cuadrado grande a la izquierda; las siguientes
+     son cuadrados pequeños alineados abajo. Al avanzar, la siguiente crece
+     y la anterior se encoge y sale por la izquierda. Se detiene en cada proyecto. */
   function initShowcase() {
-    const track = $("#slider");
-    // Al pasar el mouse por una imagen
-    track.addEventListener("mouseover", (e) => {
-      const c = e.target.closest(".sc-card");
-      if (c) setShowcase(+c.dataset.i);
-    });
-    // Al desplazar la tira (arrastre, rueda o dedo): la imagen más cercana al borde izquierdo
-    let raf = 0;
-    track.addEventListener("scroll", () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const left = track.getBoundingClientRect().left;
-        let best = 0, dist = Infinity;
-        $$(".sc-card", track).forEach((c) => {
-          const d = Math.abs(c.getBoundingClientRect().left - left - 16);
-          if (d < dist) { dist = d; best = +c.dataset.i; }
-        });
-        setShowcase(best);
+    const sec = $("#showcase"), track = $("#slider");
+    if (!sec || !track) return;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const GAP = 10, SMALL = 0.62;
+    let n = 0, cards = [], pos = 0, target = 0, B = 0, S = 0, H = 0, running = false;
+
+    const measure = () => {
+      cards = $$(".sc-card", track);
+      n = cards.length;
+      sec.style.setProperty("--n", n);
+      const r = track.getBoundingClientRect();
+      const cs = getComputedStyle(track);
+      H = r.height - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      const W = r.width - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      B = Math.max(120, Math.min(H, W * (innerWidth < 600 ? 0.74 : innerWidth < 900 ? 0.55 : 0.4)));
+      S = B * SMALL;
+    };
+    // Progreso del scroll dentro de la sección → posición (0 … n-1),
+    // con una pausa en cada proyecto para que "encaje" como en la referencia
+    const fromScroll = () => {
+      const r = sec.getBoundingClientRect();
+      const len = r.height - innerHeight;
+      const p = len > 0 ? Math.min(1, Math.max(0, -r.top / len)) : 0;
+      const raw = p * (n - 1);
+      const i = Math.floor(raw), f = raw - i;
+      const k = Math.min(1, Math.max(0, (f - 0.18) / 0.64));
+      return Math.min(n - 1, i + k * k * (3 - 2 * k));
+    };
+    const layout = () => {
+      const lerp = (a, b, t) => a + (b - a) * t;
+      cards.forEach((c, k) => {
+        const d = k - pos;
+        let x, size;
+        if (d >= 1) { size = S; x = B + GAP + (d - 1) * (S + GAP); }
+        else if (d >= 0) { size = lerp(B, S, d); x = d * (B + GAP); }
+        else if (d >= -1) { size = lerp(B, S, -d); x = d * (S + GAP); }
+        else { size = S; x = -(S + GAP) + (d + 1) * (S + GAP); }
+        c.style.width = c.style.height = size.toFixed(1) + "px";
+        c.style.transform = `translate3d(${x.toFixed(1)}px, ${(H - size).toFixed(1)}px, 0)`;
+        c.style.opacity = d < -1 ? 0 : 1;
       });
-    }, { passive: true });
+      setShowcase(Math.round(pos));
+    };
+    const loop = () => {
+      const diff = target - pos;
+      pos = reduce || Math.abs(diff) < 0.0005 ? target : pos + diff * 0.14;
+      layout();
+      if (pos !== target) requestAnimationFrame(loop); else running = false;
+    };
+    const update = () => {
+      target = fromScroll();
+      if (!running) { running = true; requestAnimationFrame(loop); }
+    };
+    sec._refresh = () => { measure(); pos = target = fromScroll(); layout(); };
+    sec._refresh();
+    addEventListener("scroll", update, { passive: true });
+    addEventListener("resize", () => sec._refresh());
+
+    // Arrastrar la tira (mouse o dedo) también avanza: se traduce en scroll de la página
+    let down = false, lastX = 0, moved = 0;
+    track.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0) return;
+      down = true; moved = 0; lastX = e.clientX;
+    });
+    addEventListener("pointermove", (e) => {
+      if (!down) return;
+      if (e.pointerType === "mouse" && e.buttons === 0) { down = false; return; } // se soltó fuera de la ventana
+      const dx = e.clientX - lastX; lastX = e.clientX;
+      moved += Math.abs(dx);
+      if (moved > 6) track.classList.add("is-dragging");
+      const per = (sec.offsetHeight - innerHeight) / Math.max(1, n - 1); // px de scroll por proyecto
+      scrollBy(0, -dx * (per / (B + GAP)) * 1.2);
+    });
+    addEventListener("pointerup", () => { down = false; setTimeout(() => track.classList.remove("is-dragging"), 0); });
+    addEventListener("pointercancel", () => { down = false; track.classList.remove("is-dragging"); });
+    track.addEventListener("click", (e) => { if (moved > 6) e.preventDefault(); }, true);
+    track.addEventListener("dragstart", (e) => e.preventDefault());
   }
 
   /* ---------- Marquesina grande arrastrable ---------- */
@@ -202,6 +264,7 @@
         <span class="sc-card__tag">${esc(t(p.titulo))}</span>
       </a>`).join("");
     setShowcase(scIndex, true);
+    if ($("#showcase")._refresh) $("#showcase")._refresh();
 
     // Ver todos + marquesina con los servicios
     $("#seeAllCount").textContent = `(${pad(PROYECTOS.length)})`;
@@ -738,13 +801,16 @@
   // Cambia el texto de un título dividido: salen las letras viejas y entran las nuevas
   function setSplitText(el, text, delay = 450) {
     if (!el.classList.contains("split")) { splitLetters(el, text); return; }
-    if (el.getAttribute("aria-label") === text) return;
-    if (!el.classList.contains("in")) { splitLetters(el, text); return; }
+    const pending = !!el._t;
+    if (text === (pending ? el._want : el.getAttribute("aria-label"))) return;
+    el._want = text;
+    if (!pending && !el.classList.contains("in")) { splitLetters(el, text); return; }
     el.classList.remove("in");
     el.classList.add("out");
     clearTimeout(el._t);
     el._t = setTimeout(() => {
-      splitLetters(el, text);
+      el._t = 0;
+      splitLetters(el, el._want);
       void el.offsetWidth;
       el.classList.add("in");
     }, delay);
@@ -868,7 +934,7 @@
   renderAll();
   if (isHome) {
     heroCtl = initHero();
-    initDrag($("#slider"));
+
     initShowcase();
     initDragMarquee();
     initListPreview();

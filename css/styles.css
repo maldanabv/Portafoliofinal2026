@@ -81,6 +81,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  overflow-x: clip; /* permite position: sticky en proyectos destacados */
   transition: background 0.5s var(--ease), color 0.5s var(--ease);
 }
 body.is-loading { overflow: hidden; }
@@ -493,8 +494,18 @@ body.ready .fh .sw { transition-delay: 0s; }
    Izquierda: cliente, rol, título y contador.
    Derecha: imágenes de distintos tamaños alineadas abajo.
    ========================================================= */
+/* La sección es alta (una "parada" por proyecto) y su contenido se queda fijo */
 .showcase {
+  --n: 5;
+  position: relative;
+  height: calc(100vh + (var(--n) - 1) * 65vh);
+  height: calc(100svh + (var(--n) - 1) * 65svh);
+}
+.showcase__pin {
+  position: sticky; top: 0; height: 100vh; height: 100svh;
   display: grid; grid-template-columns: minmax(260px, 1fr) 3fr;
+  --top: 84px; padding-top: var(--top);
+  background: linear-gradient(var(--line), var(--line)) 0 var(--top) / 100% 1px no-repeat;
   border-bottom: 1px solid var(--line);
 }
 .showcase__info {
@@ -516,23 +527,20 @@ body.ready .fh .sw { transition-delay: 0s; }
 .showcase__count { font-size: 14px; font-variant-numeric: tabular-nums; }
 
 .showcase__track {
-  display: flex; align-items: flex-end; gap: 16px;
-  height: clamp(380px, 70vh, 660px);
-  padding: 24px var(--gutter) 24px 16px;
-  overflow-x: auto; scrollbar-width: none; cursor: grab;
+  position: relative; min-height: 0; overflow: hidden;
+  --pl: 16px; padding: 24px var(--gutter) 24px var(--pl);
+  clip-path: inset(-1px 0 0 var(--pl)); /* la imagen anterior se esconde en el borde izquierdo */
+  cursor: grab; user-select: none; touch-action: pan-y;
 }
-.showcase__track::-webkit-scrollbar { display: none; }
 .showcase__track.is-dragging { cursor: grabbing; }
 .showcase__track.is-dragging a { pointer-events: none; }
 
+/* Tamaño y posición los calcula main.js (cuadrado grande + cuadrados pequeños) */
 .sc-card {
-  position: relative; flex: 0 0 auto; height: 72%; aspect-ratio: 3 / 4;
-  border-radius: 4px; overflow: hidden; background: var(--bg-2);
-  transition: filter 0.45s var(--ease), opacity 0.45s var(--ease);
+  position: absolute; top: 24px; left: var(--pl); width: 200px; height: 200px;
+  overflow: hidden; background: var(--bg-2); will-change: transform, width, height;
+  transition: filter 0.45s var(--ease);
 }
-.sc-card:nth-child(4n + 1) { height: 100%; aspect-ratio: 4 / 5; }
-.sc-card:nth-child(4n + 3) { height: 62%; aspect-ratio: 1 / 1; }
-.sc-card:nth-child(4n) { height: 80%; aspect-ratio: 16 / 11; }
 .sc-card__media, .sc-card__media > * { width: 100%; height: 100%; object-fit: cover; }
 .sc-card__media img { transition: transform 1.2s var(--ease); }
 .sc-card:hover .sc-card__media img { transform: scale(1.06); }
@@ -541,10 +549,9 @@ body.ready .fh .sw { transition-delay: 0s; }
   background: var(--rosa); color: var(--crema); font-size: 13px; line-height: 1.2;
   opacity: 0; transform: translateY(-6px); transition: opacity 0.35s, transform 0.35s var(--ease);
 }
-.sc-card.is-active .sc-card__tag, .sc-card:hover .sc-card__tag { opacity: 1; transform: none; }
-.sc-card.is-active { box-shadow: 0 0 0 1px var(--rosa); }
+.sc-card:hover .sc-card__tag { opacity: 1; transform: none; }
 @media (hover: hover) {
-  .showcase__track:hover .sc-card:not(:hover) { filter: grayscale(0.5); opacity: 0.75; }
+  .showcase__track:hover .sc-card:not(:hover) { filter: grayscale(0.5); }
 }
 
 /* =========================================================
@@ -580,10 +587,11 @@ body.ready .fh .sw { transition-delay: 0s; }
 .dmarquee__star { color: var(--rosa); font-size: 0.42em; }
 
 @media (max-width: 899px) {
-  .showcase { grid-template-columns: 1fr; }
-  .showcase__info { border-right: 0; border-bottom: 1px solid var(--line); gap: 14px; padding-top: 20px; padding-bottom: 20px; }
-  .showcase__title { margin-top: 4px; }
-  .showcase__track { height: 56vh; min-height: 340px; padding-left: var(--gutter); }
+  .showcase__pin { grid-template-columns: 1fr; grid-template-rows: auto 1fr; --top: 72px; }
+  .showcase__info { border-bottom: 1px solid var(--line); }
+  .showcase__info { border-right: 0; gap: 12px; padding-top: 16px; padding-bottom: 16px; }
+  .showcase__title { margin-top: 4px; font-size: clamp(32px, 8vw, 56px); }
+  .showcase__track { --pl: var(--gutter); padding-bottom: 76px; } /* deja libre la barra de navegación de abajo */
   .band { padding-bottom: 90px; }
 }
 
