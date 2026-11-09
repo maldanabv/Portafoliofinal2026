@@ -316,10 +316,10 @@ const SERVICIOS = [
     },
   },
   {
-    titulo: "3D",
+    titulo: { es: "Diseño 3D", en: "3D design" },
     texto: {
-      es: "Modelado, texturizado y render para dar volumen y presencia a las ideas.",
-      en: "Modeling, texturing and rendering to give ideas volume and presence.",
+      es: "Personajes, objetos y escenas en 3D: modelado, materiales, luz y render para que las ideas se puedan ver, tocar y recordar.",
+      en: "Characters, objects and scenes in 3D: modeling, materials, lighting and rendering so ideas can be seen, felt and remembered.",
     },
   },
   {
