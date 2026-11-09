@@ -276,6 +276,13 @@
     addEventListener("resize", () => sec._refresh());
   }
 
+  /* ---------- Nombre María · José: aparece al entrar en pantalla ---------- */
+  function initNameBand() {
+    const el = $("#nameBand");
+    if (!el) return;
+    whenReady(() => new IntersectionObserver(([en]) => el.classList.toggle("in", en.isIntersecting), { threshold: 0.35 }).observe(el));
+  }
+
   /* ---------- Marquesina grande arrastrable ---------- */
   function initDragMarquee() {
     const wrap = $("#dmarquee"), track = $("#dmarqueeTrack");
@@ -993,6 +1000,7 @@
 
     initShowcase();
     initServicesWheel();
+    initNameBand();
     initDragMarquee();
     initListPreview();
     initVideos();

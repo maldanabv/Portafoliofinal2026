@@ -450,7 +450,47 @@ body.ready .fh .sw { transition-delay: 0s; }
 .about__actions { margin-top: 40px; display: flex; gap: 12px; flex-wrap: wrap; }
 
 /* ---------- Trayectoria ---------- */
-.timeline { padding: 0 var(--gutter) 120px; }
+.timeline { padding: 0 var(--gutter) 60px; }
+
+/* ---------- Nombre: María · José ----------
+   Tres líneas que se dibujan desde el centro y las dos palabras a los lados.
+   Al pasar el mouse, cada palabra rueda y aparece su copia en vino. */
+.name-band { display: block; padding: 40px var(--gutter) 110px; color: var(--fg); }
+.name-band__lines { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+.name-band__lines i {
+  display: block; height: 1px; background: var(--line);
+  transform: scaleX(0); transition: transform 1.2s var(--ease);
+}
+.name-band__lines i:nth-child(1) { transform-origin: right; }
+.name-band__lines i:nth-child(3) { transform-origin: left; transition-delay: 0s; }
+.name-band__lines i:nth-child(2) { transition-delay: 0s; }
+.name-band.in .name-band__lines i { transform: none; }
+.name-band.in .name-band__lines i:nth-child(1), .name-band.in .name-band__lines i:nth-child(3) { transition-delay: 0.35s; }
+.name-band__words {
+  display: flex; justify-content: space-between; margin-top: 52px;
+  font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em;
+  font-size: clamp(30px, 3.4vw, 56px); line-height: 1;
+}
+.name-band__word { display: block; overflow: hidden; padding: 0.06em 0.04em 0.18em; margin: -0.06em -0.04em -0.18em; }
+.name-band__word > span {
+  display: inline-block; position: relative; transform: translateY(115%);
+  transition: transform 1s cubic-bezier(0.65, 0, 0.15, 1) 0.45s, translate 0.6s var(--ease);
+}
+.name-band__word + .name-band__word > span { transition-delay: 0.55s, 0s; }
+.name-band.in .name-band__word > span { transform: none; }
+.name-band__word > span::after {
+  content: attr(data-hover); position: absolute; left: 0; top: 100%; padding-top: 0.18em; color: var(--accent);
+}
+.name-band:hover .name-band__word > span { translate: 0 calc(-100% - 0.18em); }
+@media (hover: none) { .name-band:hover .name-band__word > span { translate: none; } }
+@media (max-width: 599px) {
+  .name-band { padding-bottom: 70px; }
+  .name-band__lines { gap: 12px; }
+  .name-band__words { margin-top: 32px; font-size: clamp(30px, 10vw, 44px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .name-band__lines i, .name-band__word > span { transform: none !important; translate: none !important; }
+}
 .timeline h2 { margin-bottom: 40px; }
 .timeline li {
   display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 20px; padding: 22px 0; border-top: 1px solid var(--line);

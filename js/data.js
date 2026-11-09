@@ -365,14 +365,4 @@ const TRAYECTORIA = [
     titulo: { es: "Creación Digital", en: "Digital Creation" },
     lugar: "Universidad El Bosque",
   },
-  {
-    periodo: { es: "Año", en: "Year" },
-    titulo: { es: "Formación en arte y diseño", en: "Training in art and design" },
-    lugar: { es: "Institución", en: "Institution" },
-  },
-  {
-    periodo: { es: "Año", en: "Year" },
-    titulo: { es: "Experiencia, práctica o proyecto", en: "Experience, internship or project" },
-    lugar: { es: "Empresa / Organización", en: "Company / Organization" },
-  },
 ];
